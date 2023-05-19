@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/19 11:16:08 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/19 11:55:14 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ typedef struct s_game
 //functions argv_validate
 int		read_file(char *file_name, t_game **game);
 int		check_file(char *file_name);
-char	*parse_file(int fd, t_game **game, char	*line);
+int		parse_file(int fd, t_game **game, char	**line);
 
 #endif
