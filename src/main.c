@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/18 19:08:47 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/19 09:51:58 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	checkFile(char *fileName)
 
 	fileSplit = ft_split(fileName, '.');
 	ctrl = 1;
-	if (!fileSplit[1] || ft_strncmp(fileSplit[1], "cub", 3) != 0 || ft_strlen(fileSplit[1]) != 3)
+	if	( !fileSplit[1] || ft_strncmp(fileSplit[1], "cub", 3) != 0 || ft_strlen(fileSplit[1]) != 3 )
 		ctrl = 0;
 	free(fileSplit[0]);
 	free(fileSplit[1]);

@@ -5,62 +5,42 @@
 #                                                     +:+ +:+         +:+      #
 #    By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/05/17 19:35:33 by aruiz-mo          #+#    #+#              #
-#    Updated: 2023/05/17 19:38:05 by aruiz-mo         ###   ########.fr        #
+#    Created: 2023/05/19 10:13:51 by aruiz-mo          #+#    #+#              #
+#    Updated: 2023/05/19 10:17:20 by aruiz-mo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-#PROGRAMS NAMES
-NAME = cub3d
+NAME	=	cub3d
+SRCS	=	src/main.c
+CC		=	gcc
+CFLAGS	=	-Wextra -Wall -Werror
+RM		=	rm -rf
+LIBFT	=	./libs/libft
+MLX42	=	./libs/MLX42
+HEADERS	=	-I include -I $(MLX42)/include/MLX42
+LIBS	=	-lglfw -L /Users/$(USER)/.brew/opt/glfw/lib/ $(MLX42)/libmlx42.a $(LIBFT)/libft.a
+OBJS	=	$(SRCS:%.c=%.o)
 
-LIBFT_NAME = libft.a
+all:	$(NAME)
 
-#COMPILER AND FLAGS
-
-CC = gcc
-
-CFLAGS = -Wall -Wextra -Werror
-
-#SOURCE ITEMS
-
-SRC = src/main.c
-
-#MAKE RULE
-
-MAKE = make
-
-COLOR = \033[1;32m
-
-#CREATE OBJ
-
-OBJS = $(SRC:%.c=%.o)
-
-#RULES EXECUTED
-
-all: $(NAME)
-
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
-
-$(LIBFT_NAME):
-	@$(MAKE) all -sC ./libs/libft
-	@cp -r $(addprefix ./libs/libft/, $(LIBFT_NAME)) $(LIBFT_NAME)
-
-$(NAME): $(LIBFT_NAME) $(OBJS)
-	@$(CC) $(FLAGS) $(OBJS) $(LIB) -o $(NAME) $(LIBFT_NAME)
-	@echo "$(COLOR)cub3d compiled successfully"
+$(NAME):	$(OBJS)
+			@make -C $(MLX42)
+			@make -C $(LIBFT)
+			@$(CC) $(CFLAGS) $(OBJS) $(HEADERS) $(LIBS) -o $(NAME)
 
 clean:
-	@rm -f $(OBJS)
-	@$(MAKE) clean -sC ./libs/libft
+			@make -C $(MLX42) clean
+			@make -C $(LIBFT) clean
+			$(RM) $(OBJS)
 
-fclean: clean
-	@rm -f $(NAME)
-	@rm -f $(LIBFT_NAME)
-	@$(MAKE) fclean -sC ./libs/libft
-	@echo "$(COLOR)Fclean successfully"
+fclean:		
+		@make -C $(MLX42) fclean
+		@make -C $(LIBFT) fclean
+		$(RM) $(OBJS) $(NAME)
 
-re:	fclean
-	$(MAKE)
+re:		fclean all
 
-.PHONY: clean fclean re
+run:	all
+		./$(NAME)
+
+.PHONY:	all clean fclean re
