@@ -6,12 +6,12 @@
 #    By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/19 10:13:51 by aruiz-mo          #+#    #+#              #
-#    Updated: 2023/05/19 10:17:20 by aruiz-mo         ###   ########.fr        #
+#    Updated: 2023/05/19 11:12:14 by aruiz-mo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	cub3d
-SRCS	=	src/main.c
+SRCS	=	src/main.c src/argv_validate.c
 CC		=	gcc
 CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf
