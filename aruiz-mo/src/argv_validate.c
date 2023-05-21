@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 10:48:07 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/19 12:23:10 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/21 16:25:45 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	read_file(char *file_name, t_game **game)
 	int		ctrl;
 	char	*line;
 
-	if (access(file_name, R_OK) == 0)
+	if (open(file_name, O_RDONLY) > 0)
 	{
 		ctrl = 1;
 		fd = open(file_name, O_RDONLY);
@@ -44,8 +44,7 @@ int	read_file(char *file_name, t_game **game)
 			printf("ERROR: file empty.\n");
 			ctrl = 0;
 		}
-		while (line != NULL)
-			ctrl = parse_file(fd, game, &line);
+		ctrl = parse_file(fd, game, line);
 		close (fd);
 	}
 	else
@@ -56,23 +55,31 @@ int	read_file(char *file_name, t_game **game)
 	return (ctrl);
 }
 
-int	parse_file(int fd, t_game **game, char	**line)
+int	parse_file(int fd, t_game **game, char	*line)
 {
 	int	ctrl;
-	int	ctrl_data[4];
+	int	i;
+	int ini_map;
+	int	ctrl_data[6];
 
-	(void)game;
-	ctrl_data[0, 0, 0, 0];
 	ctrl = 1;
-	ctrl = texture_data(line);
-	if (ft_strncmp((*line), "NO", 2) == 0)
-		printf("%s", (*line));
-	if (ft_strncmp((*line), "SO", 2) == 0)
-		printf("%s", (*line));
-	if (ft_strncmp((*line), "WE", 2) == 0)
-		printf("%s", (*line));
-	if (ft_strncmp((*line), "EA", 2) == 0)
-		printf("%s", (*line));
-	*line = get_next_line(fd);
+	i = -1;
+	ini_map = 0;
+	while (++i < 6)
+		ctrl_data[i] = 0;
+	while (line != NULL && ctrl == 1)
+	{
+		ctrl = texture_data(line, game, ctrl_data, &ini_map);
+		if (ini_map == 1 && ctrl == 1)
+			break ;
+		line = get_next_line(fd);
+	}
+	while (line != NULL && ctrl == 1)
+	{
+		read_map(line, &(*game)->map, &ini_map);
+		line = get_next_line(fd);
+	}
+	if (ctrl == 1)
+		ctrl = map_validate((*game)->map, ini_map);
 	return (ctrl);
 }
