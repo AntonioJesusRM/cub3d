@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 NAME	=	cub3d
-SRCS	=	src/main.c
+SRCS	=	src/main.c src/print.c
 CC		=	gcc
 CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf

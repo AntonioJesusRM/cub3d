@@ -18,21 +18,30 @@
 # define SOUTH 'S'
 # define EAST 'E'
 # define WEST 'W'
+# include "../libs/MLX42/include/MLX42/MLX42.h"
+# include "../libs/libft/libft.h"
 # include <stdio.h>
 # include <stdlib.h>
-# include "../libs/libft/libft.h"
-# include "../libs/MLX42/include/MLX42/MLX42.h"
 
 typedef struct s_game
 {
-    mlx_t           *mlx;
-    char            **map;
-    int             width;
-    int             height;
-    mlx_texture_t   *texture;
-    mlx_image_t     *space;
-    mlx_image_t     *wall;
-    mlx_image_t     *player;
-}   t_game;
+	mlx_t			*mlx;
+	char			**map;
+	mlx_texture_t	*texture;
+	mlx_image_t		*space;
+	mlx_image_t		*wall;
+	mlx_image_t		*player;
+}					t_game;
+
+/*MAIN*/
+void				init_game(t_game *game);
+int					checkFile(char *fileName);
+void				readFile(char *fileName, t_game *game);
+void				hook(mlx_key_data_t keydata, t_game *game);
+
+/*PRINT*/
+void				print_player(t_game *game);
+void				print_map(t_game *game);
+uint32_t			get_rgba(int r, int g, int b, int a);
 
 #endif

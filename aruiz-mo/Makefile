@@ -19,10 +19,10 @@ CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf
 LIBFT	=	./libs/libft
 MLX42	=	./libs/MLX42
-#HEADERS	=	-I include -I $(MLX42)/include/MLX42
-HEADERS =	-I include -ldl -lglfw -pthread -lm
-#LIBS	=	-lglfw -L /Users/$(USER)/.brew/opt/glfw/lib/ $(MLX42)/libmlx42.a $(LIBFT)/libft.a
-LIBS	=	$(MLX42)/libmlx42.a $(LIBFT)/libft.a
+HEADERS	=	-I include -I $(MLX42)/include/MLX42
+#HEADERS =	-I include -ldl -lglfw -pthread -lm
+LIBS	=	-lglfw -L /Users/$(USER)/.brew/opt/glfw/lib/ $(MLX42)/libmlx42.a $(LIBFT)/libft.a
+#LIBS	=	$(MLX42)/libmlx42.a $(LIBFT)/libft.a
 OBJS	=	$(SRCS:%.c=%.o)
 
 all:	$(NAME)

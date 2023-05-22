@@ -12,37 +12,9 @@
 
 #include "../inc/cub3d.h"
 
-void	print_map(t_game *game)
-{
-	int32_t	i;
-	int32_t	j;
-
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-			mlx_image_to_window(game->mlx, game->space, i * 30, j * 30);
-	}
-	i = -1;
-	while (game->map[++i])
-	{
-		j = -1;
-		while (game->map[i][++j])
-		{
-			if (game->map[i][j] == WALL)
-				mlx_image_to_window(game->mlx, game->wall, i * 30, j * 30);
-			else if (game->map[i][j] == NORTH)
-				mlx_image_to_window(game->mlx, game->player, i * 30, j * 30);
-		}
-	}
-}
-
 void	init_game(t_game *game)
 {
 	game->mlx = mlx_init(256, 256, "Test", true);
-	game->height = 256;
-	game->width = 256;
 	if (!game->mlx)
 		exit(EXIT_FAILURE);
 	game->texture = mlx_load_png("/Users/barbizu-/Downloads/wall.png");
@@ -68,7 +40,8 @@ int	checkFile(char *fileName)
 
 	fileSplit = ft_split(fileName, '.');
 	ctrl = 1;
-	if	( !fileSplit[1] || ft_strncmp(fileSplit[1], "cub", 3) != 0 || ft_strlen(fileSplit[1]) != 3 )
+	if (!fileSplit[1] || ft_strncmp(fileSplit[1], "cub", 3) != 0
+		|| ft_strlen(fileSplit[1]) != 3)
 		ctrl = 0;
 	free(fileSplit[0]);
 	free(fileSplit[1]);
@@ -84,7 +57,7 @@ void	readFile(char *fileName, t_game *game)
 	char	*temp;
 
 	if (access(fileName, R_OK) == 0)
-	{	
+	{
 		fd = open(fileName, O_RDONLY);
 		game->map = (char **)malloc(sizeof(char *) * 5);
 		str = ft_strdup("");
@@ -93,10 +66,10 @@ void	readFile(char *fileName, t_game *game)
 		{
 			temp = ft_strjoin(str, line);
 			str = temp;
-			printf("%s\n", line);
+			printf("%s\n", str);
 			line = get_next_line(fd);
 		}
-		close (fd);
+		close(fd);
 		game->map = ft_split(str, '\n');
 		init_game(game);
 	}
@@ -104,9 +77,10 @@ void	readFile(char *fileName, t_game *game)
 		printf("ERROR: file not found.\n");
 }
 
-void	hook(mlx_key_data_t keydata, t_game	*game)
+void	hook(mlx_key_data_t keydata, t_game *game)
 {
-	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS || keydata.action == MLX_REPEAT))
+	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
 		mlx_close_window(game->mlx);
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
@@ -122,16 +96,16 @@ void	hook(mlx_key_data_t keydata, t_game	*game)
 		game->player->instances[0].x += 5;
 }
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
-	int	ctrl;
-	t_game	*game;
+	int ctrl;
+	t_game *game;
 
 	game = malloc(sizeof(t_game));
 	if (argc != 2)
 	{
 		printf("ERROR: incorrect argument number.\n");
-		return(EXIT_SUCCESS);
+		return (EXIT_SUCCESS);
 	}
 	else
 	{
