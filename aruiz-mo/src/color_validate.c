@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:48:42 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/20 16:47:07 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/22 11:20:02 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	put_color(char ***tex, char *line)
 {
 	int	i;
 	int	j;
-	int k;
+	int	k;
 
 	i = 1;
 	while (line[i] == ' ' || line[i] == '	')
@@ -46,7 +46,7 @@ int	rgb_text(char **tex)
 	int	i;
 
 	i = -1;
-	while(tex[++i][0] != '\0')
+	while (tex[++i])
 	{
 		if (ft_atoi(tex[i]) < 0 || ft_atoi(tex[i]) > 255)
 		{
@@ -81,7 +81,7 @@ int	init_color(char ***tex, char *line, int i)
 		if (!(*tex)[k])
 			return (0);
 	}
-	(*tex)[3] = "\0";
+	(*tex)[3] = NULL;
 	return (1);
 }
 
