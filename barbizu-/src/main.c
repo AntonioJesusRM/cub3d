@@ -14,7 +14,7 @@
 
 void	init_game(t_game *game)
 {
-	game->mlx = mlx_init(256, 256, "Test", true);
+	game->mlx = mlx_init(256, 256, "cub3d", true);
 	if (!game->mlx)
 		exit(EXIT_FAILURE);
 	game->texture = mlx_load_png("/Users/barbizu-/Downloads/wall.png");
@@ -66,7 +66,6 @@ void	readFile(char *fileName, t_game *game)
 		{
 			temp = ft_strjoin(str, line);
 			str = temp;
-			printf("%s\n", str);
 			line = get_next_line(fd);
 		}
 		close(fd);
