@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 17:06:56 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/21 17:44:37 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 08:38:31 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	map_validate(char **map, int ini_map)
 {
 	int	i;
-	int ctrl;
+	int	ctrl;
 	int	j;
 
 	i = -1;
@@ -55,7 +55,7 @@ int	text_border(char l)
 	return (1);
 }
 
-int	text_int(char l, int i, int j ,char **map)
+int	text_int(char l, int i, int j, char **map)
 {
 	if (player_exist(map) != 1)
 	{
@@ -66,9 +66,11 @@ int	text_int(char l, int i, int j ,char **map)
 		return (1);
 	else if (l == '0' || l == 'N' || l == 'S' || l == 'E' || l == 'W')
 	{
-		if ((map[i - 1][j - 1] == ' ' || map[i - 1][j] == ' ' || map[i - 1][j + 1] == ' ')
-			||(map[i][j - 1] == ' ' || map[i][j + 1] == ' ')
-			||(map[i + 1][j - 1] == ' ' || map[i + 1][j] == ' ' || map[i + 1][j + 1] == ' '))
+		if ((map[i - 1][j - 1] == ' ' || map[i - 1][j] == ' '
+			|| map[i - 1][j + 1] == ' ')
+			|| (map[i][j - 1] == ' ' || map[i][j + 1] == ' ')
+			|| (map[i + 1][j - 1] == ' ' ||
+			map[i + 1][j] == ' ' || map[i + 1][j + 1] == ' '))
 		{
 			printf("Error: format map.\n");
 			return (0);
@@ -89,7 +91,7 @@ char	**norm_map(char **map)
 
 	max_len = 0;
 	i = -1;
-	while(map[++i])
+	while (map[++i])
 	{
 		if (ft_strlen(map[i]) >= max_len)
 			max_len = ft_strlen(map[i]);
@@ -100,7 +102,7 @@ char	**norm_map(char **map)
 		while (ft_strlen(map[i]) < max_len)
 			map[i] = ft_strjoin(map[i], " ");
 	}
-	return(map);
+	return (map);
 }
 
 int	player_exist(char **map)
@@ -118,9 +120,9 @@ int	player_exist(char **map)
 		{
 			if (map[i][j] == 'N' || map[i][j] == 'S'
 				|| map[i][j] == 'E' || map[i][j] == 'W')
-				{
+			{
 					ctrl++;
-				}
+			}
 		}
 	}
 	return (ctrl);

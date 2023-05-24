@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 10:48:07 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 16:55:02 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 09:16:50 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	parse_file(int fd, t_game **game, char	*line)
 {
 	int	ctrl;
 	int	i;
-	int ini_map;
+	int	ini_map;
 	int	ctrl_data[6];
 
 	ctrl = 1;
@@ -95,6 +95,18 @@ int	parse_file(int fd, t_game **game, char	*line)
 		free(line);
 		line = get_next_line(fd);
 	}
+	line = parse_file_aux(fd, game, line, ctrl);
+	free(line);
+	if (ctrl == 1)
+		ctrl = map_validate((*game)->map, ini_map);
+	return (ctrl);
+}
+
+char	*parse_file_aux(int fd, t_game **game, char *line, int ctrl)
+{
+	int	ini_map;
+
+	ini_map = 1;
 	while (line != NULL && ctrl == 1)
 	{
 		read_map(line, &(*game)->map, &ini_map);
@@ -106,8 +118,5 @@ int	parse_file(int fd, t_game **game, char	*line)
 		free(line);
 		line = get_next_line(fd);
 	}
-	free(line);
-	if (ctrl == 1)
-		ctrl = map_validate((*game)->map, ini_map);
-	return (ctrl);
+	return (line);
 }

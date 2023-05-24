@@ -6,13 +6,13 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 17:57:49 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 16:14:49 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 09:30:28 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-int init_map(int *ctrl_data, int *ini_map)
+int	init_map(int *ctrl_data, int *ini_map)
 {
 	int	i;
 

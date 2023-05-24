@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/21 14:46:01 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 16:47:48 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 09:33:30 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,9 @@ char	**ft_copy(char **new_array, char **array)
 		new_array[i] = malloc (sizeof(char) * (ft_strlen(array[i]) + 1));
 		if (!new_array[i])
 			return (0);
-		while(array[i][++j])
+		while (array[i][++j] && array[i][j] != '\n')
 			new_array[i][j] = array[i][j];
-		new_array[i][j]='\0';
+		new_array[i][j] = '\0';
 		free(array[i]);
 	}
 	return (new_array);
@@ -93,7 +93,7 @@ char	**ft_add_item(char **array, char *item)
 	new_array[len] = malloc (sizeof(char) * (ft_strlen(item) + 1));
 	if (!new_array[len])
 		return (0);
-	while(item[++i])
+	while (item[++i] && item[i] != '\n')
 		new_array[len][i] = item[i];
 	new_array[len][i] = '\0';
 	new_array[len + 1] = NULL;

@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:48:55 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 16:10:00 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 08:47:53 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,8 @@
 int	texture_data(char *line, t_game **game, int *ctrl_data, int *ini_map)
 {
 	int	ctrl;
-	int	i;
 
 	ctrl = 1;
-	i = -1;
-	(void)ini_map;
 	if (ft_strncmp(line, "NO", 2) == 0)
 		ctrl = set_texture(game, &ctrl_data, line, 0);
 	else if (ft_strncmp(line, "SO", 2) == 0)
@@ -33,18 +30,13 @@ int	texture_data(char *line, t_game **game, int *ctrl_data, int *ini_map)
 	else if (ft_strncmp(line, "C", 1) == 0)
 		ctrl = set_texture(game, &ctrl_data, line, 5);
 	else
-		while (line[++i])
-			if (line[i] == '1' || line[i] == '0')
-			{
-				ctrl = init_map(ctrl_data, ini_map);
-				break;
-			}
+		ctrl = is_map (line, ctrl_data, ini_map);
 	return (ctrl);
 }
 
 int	set_texture(t_game **game, int **ctrl_data, char *line, int i)
 {
-	int ctrl;
+	int	ctrl;
 
 	ctrl = 1;
 	if ((*ctrl_data)[i] == 0)
@@ -87,7 +79,8 @@ int	put_texture(char **tex, char *line)
 	if (!(*tex))
 		return (0);
 	j = -1;
-	while (line[i] != '\0' && line[i] != '\n' && line[i] != '	' && line[i] != ' ')
+	while (line[i] != '\0' && line[i] != '\n'
+		&& line[i] != '	' && line[i] != ' ')
 	{
 		(*tex)[++j] = line[i];
 		i++;
@@ -97,4 +90,22 @@ int	put_texture(char **tex, char *line)
 		return (1);
 	printf("Error: texture dont found.\n");
 	return (0);
+}
+
+int	is_map(char *line, int *ctrl_data, int *ini_map)
+{
+	int	i;
+	int	ctrl;
+
+	i = -1;
+	ctrl = 1;
+	while (line[++i])
+	{
+		if (line[i] == '1' || line[i] == '0')
+		{
+			ctrl = init_map(ctrl_data, ini_map);
+			break ;
+		}
+	}
+	return (ctrl);
 }

@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 15:14:46 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 09:34:14 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ t_game	*init_game(t_game *game)
 	game->map[0] = NULL;
 	return (game);
 }
+
 t_game	*free_game(t_game *game)
 {
 	free (game->no);

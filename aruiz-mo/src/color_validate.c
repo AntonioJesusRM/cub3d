@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 14:48:42 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/23 16:09:06 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/24 09:00:44 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,31 +15,13 @@
 int	put_color(char ***tex, char *line)
 {
 	int	i;
-	int	j;
-	int k;
 
 	i = 1;
 	while (line[i] == ' ' || line[i] == '	')
 		i++;
-	(void)j;
-	(void)k;
 	if (init_color(tex, line, i) == 0)
 		return (0);
-	j = 0;
-	k = -1;
-	while (line[i] != '\0' && line[i] != '\n' && line[i] != '	' && line[i] != ' ')
-	{
-		if(line[i] == ',')
-		{
-			(*tex)[j][++k] = '\0';
-			j++;
-			k = -1;
-		}
-		else
-			(*tex)[j][++k] = line[i];
-		i++;
-	}
-	(*tex)[j][++k] = '\0';
+	set_color(tex, line, i);
 	i = rgb_text((*tex));
 	return (i);
 }
@@ -49,7 +31,7 @@ int	rgb_text(char **tex)
 	int	i;
 
 	i = -1;
-	while(tex[++i])
+	while (tex[++i])
 	{
 		if (ft_atoi(tex[i]) < 0 || ft_atoi(tex[i]) > 255)
 		{
@@ -65,25 +47,23 @@ int	init_color(char ***tex, char *line, int i)
 	int	j;
 	int	k;
 
-	if(test_number(line, i) == 0)
+	if (test_number(line, i) == 0)
 		return (0);
 	free (*tex);
-	(*tex) = (char **) malloc (sizeof(char*) * 4);
+	(*tex) = (char **) malloc (sizeof(char *) * 4);
 	if (!(*tex))
 		return (0);
 	k = -1;
+	i--;
 	while (++k < 3)
 	{
 		j = 0;
-		while(line[i] != ',' && line[i] != '\0' && line[i] != '\n' && line[i] != '	' && line[i] != ' ')
-		{
-			i++;
+		while (line[++i] != ',' && line[i] != '\0' && line[i]
+			!= '\n' && line[i] != '	' && line[i] != ' ')
 			j++;
-		}
 		(*tex)[k] = (char *) malloc (sizeof(char) * (j + 1));
 		if (!(*tex)[k])
 			return (0);
-		i++;
 	}
 	(*tex)[3] = NULL;
 	return (1);
@@ -92,15 +72,16 @@ int	init_color(char ***tex, char *line, int i)
 int	test_number(char *line, int i)
 {
 	int	cont;
-	int ctrl;
+	int	ctrl;
 
 	ctrl = 1;
 	cont = 0;
-	while (line[i] != '\0' && line[i] != '\n' && line[i] != '	' && line[i] != ' ')
+	while (line[i] != '\0' && line[i] != '\n'
+		&& line[i] != '	' && line[i] != ' ')
 	{
 		if (line[i] == ',')
 			cont++;
-		else if(line[i] < '0' && line[i] > '9')
+		else if (line[i] < '0' && line[i] > '9')
 			ctrl = 0;
 		i++;
 	}
@@ -110,4 +91,27 @@ int	test_number(char *line, int i)
 		return (0);
 	}
 	return (1);
+}
+
+void	set_color(char ***tex, char *line, int i)
+{
+	int	j;
+	int	k;
+
+	j = 0;
+	k = -1;
+	while (line[i] != '\0' && line[i] != '\n'
+		&& line[i] != '	' && line[i] != ' ')
+	{
+		if (line[i] == ',')
+		{
+			(*tex)[j][++k] = '\0';
+			j++;
+			k = -1;
+		}
+		else
+			(*tex)[j][++k] = line[i];
+		i++;
+	}
+	(*tex)[j][++k] = '\0';
 }
