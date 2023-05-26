@@ -6,13 +6,13 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 10:48:07 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/24 09:16:50 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/26 09:36:58 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-int	argv_validate(int argc, char **argv, t_game **game)
+int	argv_validate(int argc, char **argv, t_dates **dates)
 {
 	int	ctrl;
 
@@ -27,7 +27,7 @@ int	argv_validate(int argc, char **argv, t_game **game)
 		if (ctrl == 0)
 			printf("ERROR: incorrect file name.\n");
 		else
-			ctrl = read_file(argv[1], game);
+			ctrl = read_file(argv[1], dates);
 	}
 	return (ctrl);
 }
@@ -48,7 +48,7 @@ int	check_file(char *file_name)
 	return (ctrl);
 }
 
-int	read_file(char *file_name, t_game **game)
+int	read_file(char *file_name, t_dates **dates)
 {
 	int		fd;
 	int		ctrl;
@@ -64,7 +64,7 @@ int	read_file(char *file_name, t_game **game)
 			printf("ERROR: file empty.\n");
 			return (0);
 		}
-		ctrl = parse_file(fd, game, line);
+		ctrl = parse_file(fd, dates, line);
 		close (fd);
 	}
 	else
@@ -75,7 +75,7 @@ int	read_file(char *file_name, t_game **game)
 	return (ctrl);
 }
 
-int	parse_file(int fd, t_game **game, char	*line)
+int	parse_file(int fd, t_dates **dates, char	*line)
 {
 	int	ctrl;
 	int	i;
@@ -89,27 +89,27 @@ int	parse_file(int fd, t_game **game, char	*line)
 		ctrl_data[i] = 0;
 	while (line != NULL && ctrl == 1)
 	{
-		ctrl = texture_data(line, game, ctrl_data, &ini_map);
+		ctrl = texture_data(line, dates, ctrl_data, &ini_map);
 		if (ini_map == 1 && ctrl == 1)
 			break ;
 		free(line);
 		line = get_next_line(fd);
 	}
-	line = parse_file_aux(fd, game, line, ctrl);
+	line = parse_file_aux(fd, dates, line, ctrl);
 	free(line);
 	if (ctrl == 1)
-		ctrl = map_validate((*game)->map, ini_map);
+		ctrl = map_validate((*dates)->map, ini_map);
 	return (ctrl);
 }
 
-char	*parse_file_aux(int fd, t_game **game, char *line, int ctrl)
+char	*parse_file_aux(int fd, t_dates **dates, char *line, int ctrl)
 {
 	int	ini_map;
 
 	ini_map = 1;
 	while (line != NULL && ctrl == 1)
 	{
-		read_map(line, &(*game)->map, &ini_map);
+		read_map(line, &(*dates)->map, &ini_map);
 		free(line);
 		line = get_next_line(fd);
 	}
