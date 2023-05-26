@@ -6,7 +6,7 @@
 #    By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/19 10:13:51 by aruiz-mo          #+#    #+#              #
-#    Updated: 2023/05/21 14:50:07 by aruiz-mo         ###   ########.fr        #
+#    Updated: 2023/05/26 09:29:57 by aruiz-mo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,10 +19,10 @@ CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf
 LIBFT	=	./libs/libft
 MLX42	=	./libs/MLX42
-#HEADERS	=	-I include -I $(MLX42)/include/MLX42
-HEADERS =	-I include -ldl -lglfw -pthread -lm
-#LIBS	=	-lglfw -L /Users/$(USER)/.brew/opt/glfw/lib/ $(MLX42)/libmlx42.a $(LIBFT)/libft.a
-LIBS	=	$(MLX42)/libmlx42.a $(LIBFT)/libft.a
+HEADERS	=	-I include -I $(MLX42)/include/MLX42
+#HEADERS =	-I include -ldl -lglfw -pthread -lm
+LIBS	=	-lglfw -L /Users/$(USER)/.brew/opt/glfw/lib/ $(MLX42)/libmlx42.a $(LIBFT)/libft.a
+#LIBS	=	$(MLX42)/libmlx42.a $(LIBFT)/libft.a
 OBJS	=	$(SRCS:%.c=%.o)
 
 all:	$(NAME)
