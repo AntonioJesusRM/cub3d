@@ -98,7 +98,7 @@ int	parse_file(int fd, t_game **game, char	*line)
 	line = parse_file_aux(fd, game, line, ctrl);
 	free(line);
 	if (ctrl == 1)
-		ctrl = map_validate((*game)->map, ini_map);
+		ctrl = map_validate((*game)->map, ini_map, &(*game)->mf, &(*game)->mc);
 	return (ctrl);
 }
 

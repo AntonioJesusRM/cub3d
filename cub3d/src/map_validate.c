@@ -12,7 +12,7 @@
 
 #include "../inc/cub3d.h"
 
-int	map_validate(char **map, int ini_map)
+int	map_validate(char **map, int ini_map, int *mf, int *mc)
 {
 	int	i;
 	int	ctrl;
@@ -25,7 +25,7 @@ int	map_validate(char **map, int ini_map)
 		printf("Error: map not found.\n");
 		return (0);
 	}
-	map = norm_map(map);
+	map = norm_map(map, mf, mc);
 	while (map[++i] && ctrl == 1)
 	{
 		j = -1;
@@ -84,7 +84,7 @@ int	text_int(char l, int i, int j, char **map)
 	return (1);
 }
 
-char	**norm_map(char **map)
+char	**norm_map(char **map, int *mf, int *mc)
 {
 	size_t	max_len;
 	int		i;
@@ -97,6 +97,8 @@ char	**norm_map(char **map)
 			max_len = ft_strlen(map[i]);
 	}
 	i = -1;
+	(*mc) = max_len;
+	(*mf) = ft_get_len(map);
 	while (map[++i])
 	{
 		while (ft_strlen(map[i]) < max_len)

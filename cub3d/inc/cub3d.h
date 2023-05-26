@@ -18,6 +18,7 @@
 # define SOUTH 'S'
 # define EAST 'E'
 # define WEST 'W'
+# define FOV '60'
 # include <stdio.h>
 # include <stdlib.h>
 # include "../libs/libft/libft.h"
@@ -31,6 +32,8 @@ typedef struct s_game
 	char	*ea;
 	char	**f;
 	char	**c;
+	int		mc;
+	int		mf;
 	char	**map;
 	mlx_t			*mlx;
 	mlx_texture_t	*texture;
@@ -70,10 +73,10 @@ void	add_line(char ***map, char *line, int nl);
 
 //functions map_validate
 
-int		map_validate(char **map, int ini_map);
+int		map_validate(char **map, int ini_map, int *mf, int *mc);
 int		text_border(char l);
 int		text_int(char l, int i, int j, char **map);
-char	**norm_map(char **map);
+char	**norm_map(char **map, int *mf, int *mc);
 int		player_exist(char **map);
 
 //functions char_array_utils

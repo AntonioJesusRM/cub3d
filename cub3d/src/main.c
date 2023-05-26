@@ -67,7 +67,7 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 
 void	init_images(t_game *game)
 {
-	game->mlx = mlx_init(256, 256, "cub3d", true);
+	game->mlx = mlx_init(800, 600, "cub3d", true);
 	if (!game->mlx)
 		exit(EXIT_FAILURE);
 	game->texture = mlx_load_png("/Users/barbizu-/Downloads/wall.png");

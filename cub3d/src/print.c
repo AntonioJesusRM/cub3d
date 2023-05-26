@@ -55,11 +55,11 @@ void	print_map(t_game *game)
 		j = -1;
 		while (game->map[i][++j])
 		{
-			mlx_image_to_window(game->mlx, game->space, j * 30, i * 30);
+			mlx_image_to_window(game->mlx, game->space, j * (800 / game->mc), i * (600 / game->mf));
 			if (game->map[i][j] == WALL)
 			{
-                img = mlx_new_image(game->mlx, 30, 30);
-                if (!img || (mlx_image_to_window(game->mlx, img, j * 30, i * 30) < 0))
+                img = mlx_new_image(game->mlx, 800 / game->mc, 600 / game->mf);
+                if (!img || (mlx_image_to_window(game->mlx, img, j * (800 / game->mc), i * (600 / game->mf)) < 0))
                     exit(EXIT_FAILURE);
 				y = 0;
 				while (y < img->height)
@@ -72,7 +72,7 @@ void	print_map(t_game *game)
 					}
 					y++;
 				}
-                mlx_image_to_window(game->mlx, game->wall, j * 30, i * 30);
+                mlx_image_to_window(game->mlx, game->wall, j * (800 / game->mc), i * (600 / game->mf));
             }	
 		}
 	}
