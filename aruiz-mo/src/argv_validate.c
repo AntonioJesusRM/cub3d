@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 10:48:07 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/26 09:36:58 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/26 18:04:13 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ int	parse_file(int fd, t_dates **dates, char	*line)
 	line = parse_file_aux(fd, dates, line, ctrl);
 	free(line);
 	if (ctrl == 1)
-		ctrl = map_validate((*dates)->map, ini_map);
+		ctrl = map_validate((*dates)->map, ini_map, &(*dates)->mf, &(*dates)->mc);
 	return (ctrl);
 }
 

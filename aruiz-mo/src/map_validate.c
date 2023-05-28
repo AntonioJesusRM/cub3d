@@ -6,13 +6,13 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 17:06:56 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/24 08:38:31 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/26 18:06:13 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-int	map_validate(char **map, int ini_map)
+int	map_validate(char **map, int ini_map, int *mf, int *mc)
 {
 	int	i;
 	int	ctrl;
@@ -25,7 +25,7 @@ int	map_validate(char **map, int ini_map)
 		printf("Error: map not found.\n");
 		return (0);
 	}
-	map = norm_map(map);
+	map = norm_map(map, mf, mc);
 	while (map[++i] && ctrl == 1)
 	{
 		j = -1;
@@ -84,7 +84,7 @@ int	text_int(char l, int i, int j, char **map)
 	return (1);
 }
 
-char	**norm_map(char **map)
+char	**norm_map(char **map, int *mf, int *mc)
 {
 	size_t	max_len;
 	int		i;
@@ -96,6 +96,8 @@ char	**norm_map(char **map)
 		if (ft_strlen(map[i]) >= max_len)
 			max_len = ft_strlen(map[i]);
 	}
+	(*mc) = max_len;
+	(*mf) = ft_get_len(map);
 	i = -1;
 	while (map[++i])
 	{
