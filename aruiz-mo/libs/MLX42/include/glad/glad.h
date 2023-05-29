@@ -4653,9 +4653,9 @@ GLAPI PFNGLINVALIDATEBUFFERDATAPROC glad_glInvalidateBufferData;
 typedef void (APIENTRYP PFNGLINVALIDATEFRAMEBUFFERPROC)(GLenum target, GLsizei numAttachments, const GLenum *attachments);
 GLAPI PFNGLINVALIDATEFRAMEBUFFERPROC glad_glInvalidateFramebuffer;
 #define glInvalidateFramebuffer glad_glInvalidateFramebuffer
-typedef void (APIENTRYP PFNGLINVALIDATESUBFRAMEBUFFERPROC)(GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height);
-GLAPI PFNGLINVALIDATESUBFRAMEBUFFERPROC glad_glInvalidateSubFramebuffer;
-#define glInvalidateSubFramebuffer glad_glInvalidateSubFramebuffer
+typedef void (APIENTRYP PFNGLINVALIdataUBFRAMEBUFFERPROC)(GLenum target, GLsizei numAttachments, const GLenum *attachments, GLint x, GLint y, GLsizei width, GLsizei height);
+GLAPI PFNGLINVALIdataUBFRAMEBUFFERPROC glad_glInvalidataubFramebuffer;
+#define glInvalidataubFramebuffer glad_glInvalidataubFramebuffer
 typedef void (APIENTRYP PFNGLMULTIDRAWARRAYSINDIRECTPROC)(GLenum mode, const void *indirect, GLsizei drawcount, GLsizei stride);
 GLAPI PFNGLMULTIDRAWARRAYSINDIRECTPROC glad_glMultiDrawArraysIndirect;
 #define glMultiDrawArraysIndirect glad_glMultiDrawArraysIndirect

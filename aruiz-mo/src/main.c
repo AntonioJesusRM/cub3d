@@ -6,121 +6,150 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/28 21:47:49 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/29 13:01:49 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
 
-t_dates	*init_dates(t_dates *dates)
+t_data	*init_data(t_data *data)
 {
-	dates->no = (char *) malloc(sizeof(char));
-	dates->no[0] = '\0';
-	dates->so = (char *) malloc(sizeof(char));
-	dates->so[0] = '\0';
-	dates->we = (char *) malloc(sizeof(char));
-	dates->we[0] = '\0';
-	dates->ea = (char *) malloc(sizeof(char));
-	dates->ea[0] = '\0';
-	dates->c = (char **) malloc(sizeof(char *));
-	dates->c[0] = NULL;
-	dates->f = (char **) malloc(sizeof(char *));
-	dates->f[0] = NULL;
-	dates->map = (char **) malloc(sizeof(char *));
-	dates->map[0] = NULL;
-	return (dates);
+	data->no = (char *) malloc(sizeof(char));
+	data->no[0] = '\0';
+	data->so = (char *) malloc(sizeof(char));
+	data->so[0] = '\0';
+	data->we = (char *) malloc(sizeof(char));
+	data->we[0] = '\0';
+	data->ea = (char *) malloc(sizeof(char));
+	data->ea[0] = '\0';
+	data->c = (char **) malloc(sizeof(char *));
+	data->c[0] = NULL;
+	data->f = (char **) malloc(sizeof(char *));
+	data->f[0] = NULL;
+	data->map = (char **) malloc(sizeof(char *));
+	data->map[0] = NULL;
+	return (data);
 }
 
-t_dates	*free_dates(t_dates *dates)
+t_data	*free_data(t_data *data)
 {
-	free (dates->no);
-	free (dates->so);
-	free (dates->we);
-	free (dates->ea);
-	ft_free_table(dates->c);
-	free(dates->c);
-	ft_free_table(dates->f);
-	free(dates->f);
-	ft_free_table(dates->map);
-	free(dates->map);
-	return (dates);
+	free (data->no);
+	free (data->so);
+	free (data->we);
+	free (data->ea);
+	ft_free_table(data->c);
+	free(data->c);
+	ft_free_table(data->f);
+	free(data->f);
+	ft_free_table(data->map);
+	free(data->map);
+	return (data);
 }
 
 int	clash_wall(int x, int y, t_game *game)
 {
-	int ctrl;
+	int		ctrl;
 	double	dmc;
 	double	dmf;
-	int	tx;
-	int	ty;
+	int		tx;
+	int		ty;
 
 	ctrl = 1;
-	dmc = (double)(game->dates->mc);
-	dmf = (double)(game->dates->mf);
+	dmc = (double)(game->data->mc);
+	dmf = (double)(game->data->mf);
 	tx = floor((dmc/(double)WIDTH) * (double)x);
 	ty = floor((dmf/(double)HEIGHT) * (double)y);
-	if (game->dates->map[ty][tx] != '0')
+	if (game->data->map[tx][ty] != '0')
 		ctrl = 0;
 	return (ctrl);
 }
 
-void print_pixel(int x[5], int y[5], t_game *game)
-{
-	mlx_image_t *img;
-	int			i;
-
-	i = 0;
-	img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!img
-		|| (mlx_image_to_window(game->mlx, img, x[i], y[i])
-			< 0))
-		exit(EXIT_FAILURE);
-	mlx_put_pixel(img, 0, 0, 0xFF0000FF);
-	mlx_put_pixel(img, x[1] - x[0], y[1] + y[0], 0xFF0000FF);
-}
-
 void point_inter_vert(t_game *game, double g)
 {
-	int	step_y;
-	int	step_x;
-	int	i;
-	int	inter_y[5];
-	int	inter_x[5];
-	double	rad;
+	int			step_y;
+	int32_t			i_y;
+	int32_t			i_x;
+	int		ctrl;
+	int			step_x;
+	int			inter_y;
+	int			inter_x;
+	double		rad;
+	mlx_image_t	*img;
+	uint32_t		y;
+	uint32_t		x;
 
-	step_y = HEIGHT / game->dates->mf;
+	step_y = HEIGHT / game->data->mf;
 	rad = calc_rad(g);
 	step_x = step_y / tan (rad);
-	inter_y[0] = game->player->y * (HEIGHT / game->dates->mf);
-	inter_x[0] = (inter_y[0]) / tan (rad);
-	if (g > 180 &&  g < 360)
-		inter_y[0] += step_y;
-	i = 1;
-	while ( inter_y[i] > 0 && inter_x[i] > 0 && inter_y[i] < 600 && inter_x[i] < 800)
+	inter_y = game->player->img->instances->y;
+	inter_x = game->player->img->instances->x;
+	if (g > 180 && g < 360)
+		inter_y += step_y;
+	i_y = inter_y;
+	i_x = inter_x;
+	ctrl = 1;
+	while (ctrl < 3)
 	{
 		if (g > 180 && g < 360)
-			inter_y[i] += step_y;
+			inter_y += step_y;
 		else
-			inter_y[i] -= step_y;
-		inter_x[i] += step_x;
-		i++;
+			inter_y -= step_y;
+		if (step_x > 0 && (g > 90 && g < 270))
+			step_x = -step_x;
+		else if (step_x < 0 && (g < 90 || g > 270))
+			step_x = -step_x;
+		inter_x += step_x;
+		//ctrl = clash_wall(inter_x, inter_y, game);
+
+		ctrl++;
 	}
-	print_pixel(inter_x, inter_y, game);
+	img = mlx_new_image(game->mlx, HEIGHT, WIDTH);
+	printf("step_x:%d, step_y:%d, inter_x:%d, inter_y:%d, i_x:%d, i_y:%d\n", step_x, step_y, inter_x, inter_y, i_x, i_y);
+	mlx_image_to_window(game->mlx, img, 0, 0);
+	y = (uint32_t)i_y;
+	x = i_x;
+	while (y > (uint32_t)inter_y)
+	{
+		mlx_put_pixel(img, x, y, 0xFF0000FF);
+		if (i_x > inter_x)
+			x--;
+		else if (i_x < inter_x)
+			x++;
+		if (i_y > inter_y)
+			y--;
+		else if (i_y < inter_y)
+			y++;
+	}
+
 }
 
 void	print_player(t_game *game)
 {
-	t_player 	*p;
-	t_dates		*d;
+	t_player	*p;
+	t_data		*d;
+	int			i;
+	double			g;
 
+	i = 0;
+	g = game->player->grade - 30;
 	p = game->player;
-	d = game->dates;
-	mlx_image_to_window(game->mlx, p->img, p->x * (WIDTH / d->mc), p->y * (HEIGHT / d->mf));
-	point_inter_vert(game, 60);
+	d = game->data;
+	mlx_image_to_window (game->mlx, p->img, p->x * (WIDTH / d->mc), p->y * (HEIGHT / d->mf));
+	point_inter_vert(game, 169.42);
+	i++;
+	/*while (i < WIDTH)
+	{
+		if (g + 0.075 >= 360)
+			g = g - 360;
+		printf("%f\n", g);
+		g += 0.075;
+		point_inter_vert(game, g);
+		i++;
+	}*/
 }
 
 
-void	put_map(char **map, t_game *game, t_dates *dates)
+void	put_map(char **map, t_game *game, t_data *data)
 {
 	int32_t	i;
 	int32_t	j;
@@ -134,12 +163,12 @@ void	put_map(char **map, t_game *game, t_dates *dates)
 		j = -1;
 		while (map[i][++j])
 		{
-			mlx_image_to_window(game->mlx, game->img, j * (WIDTH/dates->mc), i * (HEIGHT/dates->mf));
+			mlx_image_to_window(game->mlx, game->img, j * (WIDTH/data->mc), i * (HEIGHT/data->mf));
 			if (map[i][j] == '1')
 			{
-				img = mlx_new_image(game->mlx, (WIDTH/dates->mc), HEIGHT/dates->mf);
+				img = mlx_new_image(game->mlx, (WIDTH/data->mc), HEIGHT/data->mf);
 				if (!img
-					|| (mlx_image_to_window(game->mlx, img, j * (WIDTH/dates->mc), i * (HEIGHT/dates->mf))
+					|| (mlx_image_to_window(game->mlx, img, j * (WIDTH/data->mc), i * (HEIGHT/data->mf))
 						< 0))
 					exit(EXIT_FAILURE);
 				y = 0;
@@ -166,37 +195,37 @@ static void	ft_error(void)
 	exit(EXIT_FAILURE);
 }
 
-t_player	*init_player(t_dates **dates, t_player *player, t_game *game)
+t_player	*init_player(t_data **data, t_player *player, t_game *game)
 {
-	int ctrl;
-	int	i;
-	mlx_texture_t *texture;
-	int	j;
+	int				ctrl;
+	int				i;
+	mlx_texture_t	*texture;
+	int				j;
 
 	i = -1;
 	ctrl = 1;
-	while (ctrl == 1 && (*dates)->map[++i])
+	while (ctrl == 1 && (*data)->map[++i])
 	{
 		j = -1;
-		while(ctrl == 1 && (*dates)->map[i][++j])
+		while (ctrl == 1 && (*data)->map[i][++j])
 		{
-			if ((*dates)->map[i][j] == 'N' || (*dates)->map[i][j] == 'S'
-				|| (*dates)->map[i][j] == 'W' || (*dates)->map[i][j] == 'E')
+			if ((*data)->map[i][j] == 'N' || (*data)->map[i][j] == 'S'
+				|| (*data)->map[i][j] == 'W' || (*data)->map[i][j] == 'E')
 					ctrl = 0;
 		}
 	}
 	player->y = i;
 	player->x = j;
-	if ((*dates)->map[i][j] == 'N')
+	if ((*data)->map[i][j] == 'N')
 		player->grade = 90;
-	else if ((*dates)->map[i][j] == 'E')
+	else if ((*data)->map[i][j] == 'E')
 		player->grade = 360;
-	else if ((*dates)->map[i][j] == 'S')
+	else if ((*data)->map[i][j] == 'S')
 		player->grade = 270;
-	else if ((*dates)->map[i][j] == 'W')
+	else if ((*data)->map[i][j] == 'W')
 		player->grade = 180;
-	(*dates)->map[i][j] = '0';
-	texture = mlx_load_png("/home/antonio/Escritorio/mlx/avoid.png");
+	(*data)->map[i][j] = '0';
+	texture = mlx_load_png("../avoid.png");
 	if (!texture)
 		printf("NOP\n");
 	player->img = mlx_texture_to_image(game->mlx, texture);
@@ -207,6 +236,11 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 {
 	int	*x;
 	int	*y;
+	int			i;
+	double			g;
+
+	i = 0;
+	g = 60.0000;
 
 	x = &game->player->img->instances[0].x;
 	y = &game->player->img->instances[0].y;
@@ -215,7 +249,18 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		mlx_close_window(game->mlx);
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) - 5, game)))
+	{
 		game->player->img->instances[0].y -= 5;
+		point_inter_vert(game, g);
+		i++;
+		while (i < WIDTH)
+		{
+			g += 0.075;
+			printf("grade: %f\n", g);
+			point_inter_vert(game, g);
+			i++;
+		}
+	}
 	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) + 25, game)))
 		game->player->img->instances[0].y += 5;
@@ -229,18 +274,18 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 
 int	main(int argc, char **argv)
 {
-	t_dates		*dates;
+	t_data		*data;
 	t_game		*game;
 	t_player	*player;
 
-	dates = malloc(sizeof(t_dates));
-	if (!dates)
+	data = malloc(sizeof(t_data));
+	if (!data)
 		return (EXIT_SUCCESS);
-	dates = init_dates(dates);
-	if (argv_validate(argc, argv, &dates) == 0)
+	data = init_data(data);
+	if (argv_validate(argc, argv, &data) == 0)
 	{
-		dates = free_dates(dates);
-		free(dates);
+		data = free_data(data);
+		free(data);
 		return (EXIT_SUCCESS);
 	}
 	game = malloc(sizeof(t_game));
@@ -252,15 +297,15 @@ int	main(int argc, char **argv)
 	game->mlx = mlx_init(WIDTH, HEIGHT, "Cub3D", true);
 	if (!game->mlx)
 		ft_error();
-	player = init_player(&dates, player, game);
+	player = init_player(&data, player, game);
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->player = player;
-	game->dates = dates;
-	put_map(dates->map, game, dates);
+	game->data = data;
+	put_map(data->map, game, data);
 	mlx_key_hook(game->mlx, (mlx_keyfunc)hook, game);
 	mlx_loop(game->mlx);
 	mlx_terminate(game->mlx);
-	dates = free_dates(dates);
-	free(dates);
+	data = free_data(data);
+	free(data);
 	return (EXIT_SUCCESS);
 }
