@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/29 13:01:49 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/30 11:41:09 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,11 @@ int	clash_wall(int x, int y, t_game *game)
 	ctrl = 1;
 	dmc = (double)(game->data->mc);
 	dmf = (double)(game->data->mf);
-	tx = floor((dmc/(double)WIDTH) * (double)x);
-	ty = floor((dmf/(double)HEIGHT) * (double)y);
-	if (game->data->map[tx][ty] != '0')
+	tx = floor(((dmc/(double)WIDTH)) * (double)x);
+	ty = floor(((dmf/(double)HEIGHT)) * (double)y);
+	if (!game->data->map[ty][tx] || game->data->map[ty][tx] == '1')
 		ctrl = 0;
+	printf("[ty:%i][tx:%i] = valor:%c \n", ty, tx, game->data->map[ty][tx]);
 	return (ctrl);
 }
 
@@ -69,7 +70,6 @@ void point_inter_vert(t_game *game, double g)
 	int			step_y;
 	int32_t			i_y;
 	int32_t			i_x;
-	int		ctrl;
 	int			step_x;
 	int			inter_y;
 	int			inter_x;
@@ -78,74 +78,83 @@ void point_inter_vert(t_game *game, double g)
 	uint32_t		y;
 	uint32_t		x;
 
+	if (g == 180 || g == 0)
+		return ;
 	step_y = HEIGHT / game->data->mf;
 	rad = calc_rad(g);
 	step_x = step_y / tan (rad);
 	inter_y = game->player->img->instances->y;
 	inter_x = game->player->img->instances->x;
-	if (g > 180 && g < 360)
-		inter_y += step_y;
 	i_y = inter_y;
-	i_x = inter_x;
-	ctrl = 1;
-	while (ctrl < 3)
+	if ((g > 0 && g < 180))
 	{
-		if (g > 180 && g < 360)
-			inter_y += step_y;
-		else
-			inter_y -= step_y;
-		if (step_x > 0 && (g > 90 && g < 270))
+		step_y = -step_y;
+		inter_y--;
+	}
+	if ((step_x > 0 && (g > 90 && g < 270)) || (!(g > 90 && g < 270) && step_x < 0))
 			step_x = -step_x;
-		else if (step_x < 0 && (g < 90 || g > 270))
-			step_x = -step_x;
+	i_x = inter_x;
+	while (clash_wall(inter_x, inter_y, game))
+	{
 		inter_x += step_x;
-		//ctrl = clash_wall(inter_x, inter_y, game);
-
-		ctrl++;
+		inter_y += step_y;
 	}
 	img = mlx_new_image(game->mlx, HEIGHT, WIDTH);
-	printf("step_x:%d, step_y:%d, inter_x:%d, inter_y:%d, i_x:%d, i_y:%d\n", step_x, step_y, inter_x, inter_y, i_x, i_y);
 	mlx_image_to_window(game->mlx, img, 0, 0);
 	y = (uint32_t)i_y;
 	x = i_x;
-	while (y > (uint32_t)inter_y)
+	if (i_y > inter_y)
 	{
-		mlx_put_pixel(img, x, y, 0xFF0000FF);
-		if (i_x > inter_x)
-			x--;
-		else if (i_x < inter_x)
-			x++;
-		if (i_y > inter_y)
+		while (y > (uint32_t)inter_y)
+		{
+			mlx_put_pixel(img, x, y, 0xFF0000FF);
+			if (i_x > inter_x)
+				x--;
+			else if (i_x < inter_x)
+				x++;
 			y--;
-		else if (i_y < inter_y)
-			y++;
+		}
 	}
-
+	else
+	{
+		while (y < (uint32_t)inter_y)
+		{
+			mlx_put_pixel(img, x, y, 0xFF0000FF);
+			if (i_x > inter_x)
+				x--;
+			else if (i_x < inter_x)
+				x++;
+			y++;
+		}
+	}
 }
 
 void	print_player(t_game *game)
 {
 	t_player	*p;
 	t_data		*d;
-	int			i;
+	//int			i;
 	double			g;
 
-	i = 0;
+	//i = 0;
 	g = game->player->grade - 30;
 	p = game->player;
 	d = game->data;
 	mlx_image_to_window (game->mlx, p->img, p->x * (WIDTH / d->mc), p->y * (HEIGHT / d->mf));
-	point_inter_vert(game, 169.42);
-	i++;
-	/*while (i < WIDTH)
+	point_inter_vert(game, g);
+	point_inter_vert(game, g + 30);
+	if (g + 60 >= 360)
+		point_inter_vert(game, g + 60 - 360);
+	else
+		point_inter_vert(game, g + 60);
+	/* while (i < WIDTH)
 	{
 		if (g + 0.075 >= 360)
 			g = g - 360;
-		printf("%f\n", g);
 		g += 0.075;
 		point_inter_vert(game, g);
 		i++;
-	}*/
+	} */
 }
 
 
@@ -225,7 +234,7 @@ t_player	*init_player(t_data **data, t_player *player, t_game *game)
 	else if ((*data)->map[i][j] == 'W')
 		player->grade = 180;
 	(*data)->map[i][j] = '0';
-	texture = mlx_load_png("../avoid.png");
+	texture = mlx_load_png("avoid.png");
 	if (!texture)
 		printf("NOP\n");
 	player->img = mlx_texture_to_image(game->mlx, texture);
@@ -236,11 +245,6 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 {
 	int	*x;
 	int	*y;
-	int			i;
-	double			g;
-
-	i = 0;
-	g = 60.0000;
 
 	x = &game->player->img->instances[0].x;
 	y = &game->player->img->instances[0].y;
@@ -249,18 +253,7 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		mlx_close_window(game->mlx);
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) - 5, game)))
-	{
 		game->player->img->instances[0].y -= 5;
-		point_inter_vert(game, g);
-		i++;
-		while (i < WIDTH)
-		{
-			g += 0.075;
-			printf("grade: %f\n", g);
-			point_inter_vert(game, g);
-			i++;
-		}
-	}
 	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) + 25, game)))
 		game->player->img->instances[0].y += 5;
