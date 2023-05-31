@@ -102,7 +102,7 @@ void point_inter_vert(t_game *game, double g)
 		ctrl = clash_wall(inter_x, inter_y, game);
 	}
 	img = mlx_new_image(game->mlx, HEIGHT, WIDTH);
-	printf("step_x:%d, step_y:%d, inter_x:%d, inter_y:%d, i_x:%d, i_y:%d\n", step_x, step_y, inter_x, inter_y, i_x, i_y);
+	//printf("step_x:%d, step_y:%d, inter_x:%d, inter_y:%d, i_x:%d, i_y:%d\n", step_x, step_y, inter_x, inter_y, i_x, i_y);
 	mlx_image_to_window(game->mlx, img, 0, 0);
 	y = (uint32_t)i_y;
 	x = i_x;
@@ -129,6 +129,8 @@ void	print_player(t_game *game)
 	double			g;
 	uint32_t	y;
 	uint32_t	x;
+	uint32_t	newx;
+	uint32_t	newy;
 
 	i = 0;
 	g = game->player->grade - 30;
@@ -146,7 +148,22 @@ void	print_player(t_game *game)
 		}
 		y++;
 	}
-	point_inter_vert(game, g);
+	newx = 1 + p->img->instances->x + sin(p->rotate) * 20;
+	newy = p->img->instances->y - cos(p->rotate) * 20;
+	mlx_image_to_window(game->mlx, p->line, 0, 0);
+	printf("y:%d, x:%d, newy:%d, nx:%d\n", p->img->instances->y, p->img->instances->x, newy, newx);
+	y = p->img->instances->y; //solo si es N, es decir, 90 grados
+	while (y > newy)
+	{
+		x = p->img->instances->x;
+		while (x < newx)
+		{
+			mlx_put_pixel(p->line, x, y, 0xFFFFFFFF);
+			x++;
+		}
+		y--;
+	}
+	/*point_inter_vert(game, g);
 	i++;
 	while (i < WIDTH)
 	{
@@ -155,7 +172,7 @@ void	print_player(t_game *game)
 		g += 0.075;
 		point_inter_vert(game, g);
 		i++;
-	}
+	}*/
 }
 
 
@@ -227,6 +244,8 @@ t_player	*init_player(t_data **data, t_player *player, t_game *game)
 	}
 	player->y = i;
 	player->x = j;
+	player->rotate = 0;
+	player->turn = SPEED * (PI/180);
 	if ((*data)->map[i][j] == 'N')
 		player->grade = 90;
 	else if ((*data)->map[i][j] == 'E')
@@ -241,6 +260,9 @@ t_player	*init_player(t_data **data, t_player *player, t_game *game)
 		printf("NOP\n");*/
 	player->img = mlx_new_image(game->mlx, 4, 4);
 	if (!player->img)
+		exit(EXIT_FAILURE);
+	player->line = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+	if (!player->line)
 		exit(EXIT_FAILURE);
 	/*y = 0;
 	while (y < player->img->height)
@@ -263,37 +285,151 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 	int	*y;
 	int			i;
 	double			g;
+	uint32_t	newy;
+	uint32_t	newx;
+	uint32_t	x2;
+	uint32_t	y2;
 
 	i = 0;
 	g = 60.0000;
-
-	x = &game->player->img->instances[0].x;
-	y = &game->player->img->instances[0].y;
+	x = &game->player->img->instances->x;
+	y = &game->player->img->instances->y;
+	if (keydata.key == MLX_KEY_RIGHT && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		game->player->rotate += 1 * game->player->turn;
+		game->player->grade += game->player->rotate;
+		if (game->player->grade >= 360)
+			game->player->grade -= 360;
+		newx = game->player->img->instances->x + cos(game->player->rotate) * 20;
+		newy = game->player->img->instances->y + sin(game->player->rotate) * 20;
+		mlx_delete_image(game->mlx, game->player->line);
+		game->player->line = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+		if (!game->player->line)
+			exit(EXIT_FAILURE);
+		mlx_image_to_window(game->mlx, game->player->line, 0, 0);
+		if ((uint32_t)game->player->img->instances->y < newy)
+		{
+			y2 = game->player->img->instances->y;
+			printf("1y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
+			while (y2 < newy)
+			{
+				x2 = game->player->img->instances->x;
+				while (x2 < newx)
+				{
+					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+					x2++;
+				}
+				y2++;
+			}
+		}
+		else
+		{
+			y2 = game->player->img->instances->y;
+			//printf("2y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
+			while (y2 > newy)
+			{
+				x2 = game->player->img->instances->x;
+				if ((uint32_t)game->player->img->instances->x > newx)
+				{
+					while (x2 > newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2--;
+					}
+				}
+				y2--;
+			}
+		}
+	}
+	if (keydata.key == MLX_KEY_LEFT && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		game->player->rotate += -1 * game->player->turn;
+		game->player->grade -= game->player->rotate;
+		printf("grade:%d\n", game->player->grade);
+		if (game->player->grade <= 0)
+			game->player->grade = 360 + game->player->grade;
+		printf("grade:%d\n", game->player->grade);
+		newx = game->player->img->instances->x + cos(game->player->rotate) * 20;
+		newy = game->player->img->instances->y + sin(game->player->rotate) * 20;
+		printf("rotate:%f, grade:%d\n", game->player->rotate, game->player->grade);
+		mlx_delete_image(game->mlx, game->player->line);
+		game->player->line = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+		if (!game->player->line)
+			exit(EXIT_FAILURE);
+		mlx_image_to_window(game->mlx, game->player->line, 0, 0);
+		if ((uint32_t)game->player->img->instances->y < newy)
+		{
+			y2 = game->player->img->instances->y;
+			//printf("1y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
+			while (y2 < newy)
+			{
+				x2 = game->player->img->instances->x;
+				while (x2 < newx)
+				{
+					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+					x2++;
+				}
+				y2++;
+			}
+		}
+		else
+		{
+			y2 = game->player->img->instances->y;
+			//printf("2y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
+			while (y2 > newy)
+			{
+				x2 = game->player->img->instances->x;
+				while (x2 > newx)
+				{
+					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+					x2--;
+				}
+				y2--;
+			}
+		}
+	}
 	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 		mlx_close_window(game->mlx);
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
-			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) - 5, game)))
+			|| keydata.action == MLX_REPEAT))
 	{
-		game->player->img->instances[0].y -= 5;
-		point_inter_vert(game, g);
+		newy = game->player->img->instances->y - (cos(game->player->rotate) * SPEED);
+		game->player->line->instances->y += newy - game->player->img->instances->y;
+		game->player->img->instances->y = newy;
+		printf("line:%d,img:%d\n", game->player->line->instances->y, game->player->img->instances->y);
+		/*point_inter_vert(game, g);
 		i++;
 		while (i < WIDTH)
 		{
 			g += 0.075;
 			point_inter_vert(game, g);
 			i++;
-		}
+		}*/
 	}
 	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
-			|| keydata.action == MLX_REPEAT) && (clash_wall((*x), (*y) + 25, game)))
-		game->player->img->instances[0].y += 5;
+			|| keydata.action == MLX_REPEAT))
+	{
+		newy = game->player->img->instances->y + (cos(game->player->rotate) * SPEED);
+		game->player->line->instances->y += newy - game->player->img->instances->y;
+		game->player->img->instances->y = newy;
+	}
 	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
-			|| keydata.action == MLX_REPEAT) && (clash_wall((*x) - 5, (*y), game)))
-		game->player->img->instances[0].x -= 5;
+			|| keydata.action == MLX_REPEAT))
+	{
+		newx = game->player->img->instances->x - (cos(game->player->rotate) * SPEED);
+		game->player->line->instances->x += newx - game->player->img->instances->x;
+		game->player->img->instances->x = newx;
+	}
 	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
-			|| keydata.action == MLX_REPEAT) && (clash_wall((*x) + 25, (*y), game)))
-		game->player->img->instances[0].x += 5;
+			|| keydata.action == MLX_REPEAT))
+	{
+		newx = game->player->img->instances->x + (cos(game->player->rotate) * SPEED);
+		game->player->line->instances->x += newx - game->player->img->instances->x;
+		game->player->img->instances->x = newx;
+	}
 }
 
 int	main(int argc, char **argv)

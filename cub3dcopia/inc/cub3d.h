@@ -20,6 +20,7 @@
 # define WIDTH 800
 # define PI 3.1416
 # define HEIGHT 600
+# define SPEED 3
 
 typedef struct s_data
 {
@@ -39,7 +40,10 @@ typedef struct s_player
 	int				x;
 	int				y;
 	int				grade;
+	double			turn; //velocidad del giro en grados
+	double			rotate; //anguloRotacion
 	mlx_image_t		*img;
+	mlx_image_t		*line;
 }	t_player;
 
 typedef struct s_game
