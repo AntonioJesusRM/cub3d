@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/01 07:04:19 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/01 11:17:18 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int	clash_wall(int x, int y, t_game *game)
 	int	ctrl;
 
 	ctrl = 1;
+	if (y >= game->data->mf || x >= game->data->mc)
+		return (0);
 	if (game->data->map[x][y] != '0')
 		ctrl = 0;
 	return (ctrl);
@@ -125,11 +127,15 @@ void point_inter_horiz(t_game *game, double g, t_ray **ray)
 		nextx_hor--;
 	while (nextx_hor >= 0 && nextx_hor <= 800 && nexty_hor >= 0 && nexty_hor <= 600)
 	{
-		x = round(nextx_hor * game->data->mc / WIDTH);
-		y = round(nexty_hor * game->data->mf / HEIGHT);
+		x = floor(nextx_hor * game->data->mc / WIDTH);
+		y = floor(nexty_hor * game->data->mf / HEIGHT);
+		if (y == 5)
+			y--;
 		if (clash_wall(y, x, game) == 0)
 		{
 			(*ray)->c_hor = 1;
+			if (y >= game->data->mf || x >= game->data->mc)
+				(*ray)->c_hor = 0;
 			if (!(g > 90 && g < 270))
 				nextx_hor -= step_x;
 			(*ray)->x_hor = nextx_hor;
@@ -177,6 +183,8 @@ void point_inter_vert(t_game *game, double g, t_ray **ray)
 		if (clash_wall(y, x, game) == 0)
 		{
 			(*ray)->c_ver = 1;
+			if (y >= game->data->mf || x >= game->data->mc)
+				(*ray)->c_ver = 1;
 			(*ray)->x_ver = nextx_vert;
 			(*ray)->y_ver = nexty_vert; 
 			break;
@@ -213,13 +221,13 @@ void	calculate_ray (t_game *game, double g)
 	point_inter_horiz(game, g, &ray);
 	if (ray->c_hor == 1 && ray->c_ver == 0)
 	{
-		printf("Para %i el choque es con la vertical.\n", (int)g);
+		printf("Para %f el choque es con el eje Y.\n", g);
 		x_clash = ray->x_hor;
 		y_clash = ray->y_hor;
 	}
 	else if (ray->c_hor == 0 && ray->c_ver == 1)
 	{
-		printf("Para %i el choque es con la horizontal.\n", (int)g);
+		printf("Para %f el choque es con el eje X.\n", g);
 		x_clash = ray->x_ver;
 		y_clash = ray->y_ver;
 	}
@@ -233,13 +241,13 @@ void	calculate_ray (t_game *game, double g)
 		distver = sqrt(pow(x_clash,2) + pow(y_clash,2));
 		if (disthor < distver)
 		{
-			printf("Para %i el choque mas cercano es con la vertical.\n", (int)g);
+			printf("Para %f el choque mas cercano es con el eje Y.\n", g);
 			x_clash = ray->x_hor;
 			y_clash = ray->y_hor;
 		}
 		else
 		{
-			printf("Para %i el choque mas cercano es con la horizonrtal.\n", (int)g);
+			printf("Para %f el choque mas cercano es con el eje X.\n", g);
 			x_clash = ray->x_ver;
 			y_clash = ray->y_ver;
 		}
@@ -256,6 +264,7 @@ void	print_player(t_game *game)
 
 	//i = 0;
 	g = game->player->grade - 30;
+	//g = 249.75;
 	p = game->player;
 	d = game->data;
 	mlx_image_to_window (game->mlx, p->img, p->x * (WIDTH / d->mc), p->y * (HEIGHT / d->mf));
@@ -265,12 +274,12 @@ void	print_player(t_game *game)
 		calculate_ray(game, g + 60 - 360);
 	else
 		calculate_ray(game, g + 60);
-	/*while (i < WIDTH)
+	/* while (i < WIDTH)
 	{
 		if (g + 0.075 >= 360)
 			g = g - 360;
 		g += 0.075;
-		point_inter_vert(game, g);
+		calculate_ray(game, g);
 		i++;
 	} */
 }
