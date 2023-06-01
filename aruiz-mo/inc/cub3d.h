@@ -50,6 +50,16 @@ typedef struct s_game
 	t_player	*player;
 }	t_game;
 
+typedef struct s_ray
+{
+	int	x_hor;
+	int	y_hor;
+	int	x_ver;
+	int	y_ver;
+	int	c_hor;
+	int	c_ver;
+}	t_ray;
+
 //functions argv_validate
 
 int		argv_validate(int argc, char **argv, t_data **data);
