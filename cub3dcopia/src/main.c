@@ -148,20 +148,19 @@ void	print_player(t_game *game)
 		}
 		y++;
 	}
-	newx = 1 + p->img->instances->x + sin(p->rotate) * 20;
-	newy = p->img->instances->y - cos(p->rotate) * 20;
+	newx = p->img->instances->x + cos(p->rotate) * 20;
+	newy = p->img->instances->y + sin(p->rotate) * 20;
 	mlx_image_to_window(game->mlx, p->line, 0, 0);
-	printf("y:%d, x:%d, newy:%d, nx:%d\n", p->img->instances->y, p->img->instances->x, newy, newx);
-	y = p->img->instances->y; //solo si es N, es decir, 90 grados
-	while (y > newy)
+	y = p->img->instances->y;
+	while (y < newy)
 	{
 		x = p->img->instances->x;
-		while (x < newx)
+		while (x > newx)
 		{
 			mlx_put_pixel(p->line, x, y, 0xFFFFFFFF);
-			x++;
+			x--;
 		}
-		y--;
+		y++;
 	}
 	/*point_inter_vert(game, g);
 	i++;
@@ -244,17 +243,17 @@ t_player	*init_player(t_data **data, t_player *player, t_game *game)
 	}
 	player->y = i;
 	player->x = j;
-	player->rotate = 0;
 	player->turn = SPEED * (PI/180);
 	if ((*data)->map[i][j] == 'N')
-		player->grade = 90;
+		player->grade = calc_rad(90);
 	else if ((*data)->map[i][j] == 'E')
-		player->grade = 360;
+		player->grade = calc_rad(0);
 	else if ((*data)->map[i][j] == 'S')
-		player->grade = 270;
+		player->grade = calc_rad(270);
 	else if ((*data)->map[i][j] == 'W')
-		player->grade = 180;
+		player->grade = calc_rad(180);
 	(*data)->map[i][j] = '0';
+	player->rotate = 0;
 	/*texture = mlx_load_png("../avoid.png");
 	if (!texture)
 		printf("NOP\n");*/
@@ -298,9 +297,11 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 			|| keydata.action == MLX_REPEAT))
 	{
 		game->player->rotate += 1 * game->player->turn;
-		game->player->grade += game->player->rotate;
+		if (game->player->rotate >= PI * 2)
+			game->player->rotate -= PI * 2;
+		/*game->player->grade += game->player->rotate;
 		if (game->player->grade >= 360)
-			game->player->grade -= 360;
+			game->player->grade -= 360;*/
 		newx = game->player->img->instances->x + cos(game->player->rotate) * 20;
 		newy = game->player->img->instances->y + sin(game->player->rotate) * 20;
 		mlx_delete_image(game->mlx, game->player->line);
@@ -311,14 +312,24 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		if ((uint32_t)game->player->img->instances->y < newy)
 		{
 			y2 = game->player->img->instances->y;
-			printf("1y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
 			while (y2 < newy)
 			{
 				x2 = game->player->img->instances->x;
-				while (x2 < newx)
+				if ((uint32_t)game->player->img->instances->x > newx)
 				{
-					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
-					x2++;
+					while (x2 > newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2--;
+					}
+				}
+				else
+				{
+					while (x2 < newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2++;
+					}
 				}
 				y2++;
 			}
@@ -326,7 +337,6 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		else
 		{
 			y2 = game->player->img->instances->y;
-			//printf("2y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
 			while (y2 > newy)
 			{
 				x2 = game->player->img->instances->x;
@@ -338,6 +348,14 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 						x2--;
 					}
 				}
+				else
+				{
+					while (x2 < newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2++;
+					}
+				}
 				y2--;
 			}
 		}
@@ -346,14 +364,13 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 			|| keydata.action == MLX_REPEAT))
 	{
 		game->player->rotate += -1 * game->player->turn;
-		game->player->grade -= game->player->rotate;
-		printf("grade:%d\n", game->player->grade);
+		if (game->player->rotate <= 0)
+			game->player->rotate = PI * 2 + game->player->rotate;
+		/*game->player->grade -= game->player->rotate;
 		if (game->player->grade <= 0)
-			game->player->grade = 360 + game->player->grade;
-		printf("grade:%d\n", game->player->grade);
+			game->player->grade = 360 + game->player->grade;*/
 		newx = game->player->img->instances->x + cos(game->player->rotate) * 20;
 		newy = game->player->img->instances->y + sin(game->player->rotate) * 20;
-		printf("rotate:%f, grade:%d\n", game->player->rotate, game->player->grade);
 		mlx_delete_image(game->mlx, game->player->line);
 		game->player->line = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 		if (!game->player->line)
@@ -362,14 +379,24 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		if ((uint32_t)game->player->img->instances->y < newy)
 		{
 			y2 = game->player->img->instances->y;
-			//printf("1y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
 			while (y2 < newy)
 			{
 				x2 = game->player->img->instances->x;
-				while (x2 < newx)
+				if ((uint32_t)game->player->img->instances->x > newx)
 				{
-					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
-					x2++;
+					while (x2 > newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2--;
+					}
+				}
+				else
+				{
+					while (x2 < newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2++;
+					}
 				}
 				y2++;
 			}
@@ -377,14 +404,24 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 		else
 		{
 			y2 = game->player->img->instances->y;
-			//printf("2y:%d,x:%d,ny:%d,nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy,newx);
 			while (y2 > newy)
 			{
 				x2 = game->player->img->instances->x;
-				while (x2 > newx)
+				if ((uint32_t)game->player->img->instances->x > newx)
 				{
-					mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
-					x2--;
+					while (x2 > newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2--;
+					}
+				}
+				else
+				{
+					while (x2 < newx)
+					{
+						mlx_put_pixel(game->player->line, x2, y2, 0xFFFFFFFF);
+						x2++;
+					}
 				}
 				y2--;
 			}
@@ -396,39 +433,40 @@ void	hook(mlx_key_data_t keydata, t_game *game)
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		newy = game->player->img->instances->y - (cos(game->player->rotate) * SPEED);
-		game->player->line->instances->y += newy - game->player->img->instances->y;
+		newx = game->player->img->instances->x + (cos(game->player->rotate) * SPEED);
+		newy = game->player->img->instances->y + (sin(game->player->rotate) * SPEED);
+		printf("y:%d, x:%d, newy:%d, nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy, newx);
+		game->player->line->instances->x += newx - game->player->img->instances->x;
+		game->player->img->instances->x = newx;
 		game->player->img->instances->y = newy;
-		printf("line:%d,img:%d\n", game->player->line->instances->y, game->player->img->instances->y);
-		/*point_inter_vert(game, g);
-		i++;
-		while (i < WIDTH)
-		{
-			g += 0.075;
-			point_inter_vert(game, g);
-			i++;
-		}*/
 	}
 	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		newy = game->player->img->instances->y + (cos(game->player->rotate) * SPEED);
-		game->player->line->instances->y += newy - game->player->img->instances->y;
+		newx = game->player->img->instances->x - (cos(game->player->rotate) * SPEED);
+		newy = game->player->img->instances->y - (sin(game->player->rotate) * SPEED);
+		printf("y:%d, x:%d, newy:%d, nx:%d\n", game->player->img->instances->y, game->player->img->instances->x, newy, newx);
+		game->player->line->instances->x += newx - game->player->img->instances->x;
+		game->player->img->instances->x = newx;
 		game->player->img->instances->y = newy;
 	}
 	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
 		newx = game->player->img->instances->x - (cos(game->player->rotate) * SPEED);
+		newy = game->player->img->instances->y - (sin(game->player->rotate) * SPEED);
 		game->player->line->instances->x += newx - game->player->img->instances->x;
 		game->player->img->instances->x = newx;
+		game->player->img->instances->y = newy;
 	}
 	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
 		newx = game->player->img->instances->x + (cos(game->player->rotate) * SPEED);
+		newy = game->player->img->instances->y + (sin(game->player->rotate) * SPEED);
 		game->player->line->instances->x += newx - game->player->img->instances->x;
 		game->player->img->instances->x = newx;
+		game->player->img->instances->y = newy;
 	}
 }
 

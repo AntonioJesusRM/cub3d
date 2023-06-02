@@ -39,7 +39,7 @@ typedef struct s_player
 {
 	int				x;
 	int				y;
-	int				grade;
+	double			grade;
 	double			turn; //velocidad del giro en grados
 	double			rotate; //anguloRotacion
 	mlx_image_t		*img;
