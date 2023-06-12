@@ -64,35 +64,36 @@ t_player	*init_player(t_data **data, t_player *player)
 					ctrl = 0;
 		}
 	}
-	player->position.y = i;
-	player->position.x = j;
+	player->pos.y = i;
+	player->pos.x = j;
+	player->turn = calc_rad(2);
 	if ((*data)->map[i][j] == 'N')
 	{
-		player->direction.x = 0;
-		player->direction.y = 1;
-		player->cam.x = -1;
-		player->cam.y = 0;
+		player->dir.x = 0;
+		player->dir.y = -1;
+		player->plane.x = 1;
+		player->plane.y = 0;
 	}
 	else if ((*data)->map[i][j] == 'E')
 	{
-		player->direction.x = 1;
-		player->direction.y = 0;
-		player->cam.x = 0;
-		player->cam.y = -1;
+		player->dir.x = 1;
+		player->dir.y = 0;
+		player->plane.x = 0;
+		player->plane.y = -1;
 	}
 	else if ((*data)->map[i][j] == 'S')
 	{
-		player->direction.x = 0;
-		player->direction.y = -1;
-		player->cam.x = 1;
-		player->cam.y = 0;
+		player->dir.x = 0;
+		player->dir.y = 1;
+		player->plane.x = -1;
+		player->plane.y = 0;
 	}
 	else if ((*data)->map[i][j] == 'W')
 	{
-		player->direction.x = -1;
-		player->direction.y = 0;
-		player->cam.x = 0;
-		player->cam.y = 1;
+		player->dir.x = -1;
+		player->dir.y = 0;
+		player->plane.x = 0;
+		player->plane.y = 1;
 	}
 	(*data)->map[i][j] = '0';
 	return (player);
@@ -108,14 +109,10 @@ uint32_t get_rgba(char **rgb)
 	b = ft_atoi(rgb[2]);
     return (r << 24 | g << 16 | b << 8 | 255);
 }
-void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color)
+void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_image_t	*img)
 {
-	mlx_image_t	*img;
-	int			i;
+	int	i;
 
-	img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	if (!img || (mlx_image_to_window(game->mlx, img, x, 0) < 0))
-		printf("ERROR\n");
 	i = 0;
 	while (i < y_init)
 	{
@@ -156,39 +153,47 @@ void print_map(t_game *game)
 	uint32_t	color;
 
 	x = 0;
+	mlx_image_t	*img;
+
+	img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+	if (!img)
+		printf("ERROR\n");
+	if (mlx_image_to_window(game->mlx, img, 0, 0) < 0)
+		printf("ERROR\n");
+	printf("!\n");
 	while(x < WIDTH)
     {
 		hit = 0;
-		delta_x = pow(1,30);
-		delta_y = pow(1,30);
-		map_x = (int)game->player->position.x;
-		map_y = (int)game->player->position.y;
+		delta_x = pow(10,30);
+		delta_y = pow(10,30);
+		map_x = (int)game->player->pos.x;
+		map_y = (int)game->player->pos.y;
 		camera_x = 2 * x / (double)WIDTH - 1;
-		ray_x = game->player->direction.x + game->player->cam.x * camera_x;
-		ray_y = game->player->direction.y + game->player->cam.y * camera_x;
+		ray_x = game->player->dir.x + game->player->plane.x * camera_x;
+		ray_y = game->player->dir.y + game->player->plane.y * camera_x;
 		if (ray_x != 0)
-			delta_x = sqrt(1 + (ray_y * ray_y) / (ray_x * ray_x));
+			delta_x = fabs(1/ray_x);
 		if (ray_y != 0)
-			delta_y = sqrt(1 + (ray_x * ray_x) / (ray_y * ray_y));
+			delta_y = fabs(1/ray_y);
 		if (ray_x < 0)
 		{
-			step_x = 1;
-			side_dist_x = (game->player->position.x - map_x) * delta_x;
+			step_x = -1;
+			side_dist_x = (game->player->pos.x - map_x) * delta_x;
 		}
 		else
 		{
-			step_x = -1;
-			side_dist_x = (map_x + 1.0 - game->player->position.x) * delta_x;
+			step_x = 1;
+			side_dist_x = (map_x + 1.0 - game->player->pos.x) * delta_x;
 		}
 		if (ray_y < 0)
 		{
-			step_y = 1;
-			side_dist_y = (game->player->position.y - map_y) * delta_y;
+			step_y = -1;
+			side_dist_y = (game->player->pos.y - map_y) * delta_y;
 		}
 		else
 		{
-			step_y = -1;
-			side_dist_y = (map_y + 1.0 - game->player->position.y) * delta_y;
+			step_y = 1;
+			side_dist_y = (map_y + 1.0 - game->player->pos.y) * delta_y;
 		}
 		while (hit == 0)
 		{
@@ -217,7 +222,6 @@ void print_map(t_game *game)
 			perp_wall_dist = (side_dist_y - delta_y);
 			color = 0x000000FF;
 		}
-		x++;
 		line_h = (int)(HEIGHT / perp_wall_dist);
 		draw_start = -line_h / 2 + HEIGHT / 2;
 		if (draw_start < 0)
@@ -225,7 +229,71 @@ void print_map(t_game *game)
 		draw_end = line_h / 2 + HEIGHT / 2;
 		if(draw_end >= HEIGHT)
 			draw_end = HEIGHT - 1;
-		draw_line(game, x, draw_start, draw_end, color);
+		draw_line(game, x, draw_start, draw_end, color, img);
+		x++;
+	}
+}
+
+void	hook(mlx_key_data_t keydata, t_game **game)
+{
+	double	oldx;
+
+	if (keydata.key == MLX_KEY_RIGHT && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		oldx = (*game)->player->dir.x;
+		(*game)->player->dir.x = (*game)->player->dir.x * cos((*game)->player->turn) - (*game)->player->dir.y * sin((*game)->player->turn);
+		(*game)->player->dir.y = oldx * sin((*game)->player->turn) + (*game)->player->dir.y * cos((*game)->player->turn);
+		printf("dir_x:%f, dir_y:%f\n", (*game)->player->dir.x, (*game)->player->dir.y);
+		oldx = (*game)->player->plane.x;
+		(*game)->player->plane.x = (*game)->player->plane.x * cos((*game)->player->turn) - (*game)->player->plane.y * sin((*game)->player->turn);
+		(*game)->player->plane.y = oldx * sin((*game)->player->turn) + (*game)->player->plane.y * cos((*game)->player->turn);
+		print_map(*game);
+	}
+	if (keydata.key == MLX_KEY_LEFT && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		oldx = (*game)->player->dir.x;
+		(*game)->player->dir.x = (*game)->player->dir.x * cos(-(*game)->player->turn) - (*game)->player->dir.y * sin(-(*game)->player->turn);
+		(*game)->player->dir.y = oldx * sin(-(*game)->player->turn) + (*game)->player->dir.y * cos(-(*game)->player->turn);
+		printf("dir_x:%f, dir_y:%f\n", (*game)->player->dir.x, (*game)->player->dir.y);
+		oldx = (*game)->player->plane.x;
+		(*game)->player->plane.x = (*game)->player->plane.x * cos(-(*game)->player->turn) - (*game)->player->plane.y * sin(-(*game)->player->turn);
+		(*game)->player->plane.y = oldx * sin(-(*game)->player->turn) + (*game)->player->plane.y * cos(-(*game)->player->turn);
+		print_map(*game);
+	}
+	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+		mlx_close_window((*game)->mlx);
+	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		(*game)->player->pos.x += (*game)->player->dir.x * SPEED;
+		(*game)->player->pos.y += (*game)->player->dir.y * SPEED;
+		printf("pos_x:%f, pos_y:%f v_dir_x: %f\n", (*game)->player->pos.x, (*game)->player->pos.y, (*game)->player->dir.x);
+		print_map(*game);
+	}
+	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		(*game)->player->pos.x -= (*game)->player->dir.x * SPEED;
+		(*game)->player->pos.y -= (*game)->player->dir.y * SPEED;
+		printf("pos_x:%f, pos_y:%f\n", (*game)->player->pos.x, (*game)->player->pos.y);
+		print_map(*game);
+	}
+	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		(*game)->player->pos.x += (*game)->player->dir.y * SPEED;
+		(*game)->player->pos.y += (*game)->player->dir.x * SPEED;
+		print_map(*game);
+	}
+	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
+			|| keydata.action == MLX_REPEAT))
+	{
+		(*game)->player->pos.x -= (*game)->player->dir.y * SPEED;
+		(*game)->player->pos.y -= (*game)->player->dir.x * SPEED;
+		print_map(*game);
 	}
 }
 
@@ -261,7 +329,7 @@ int	main(int argc, char **argv)
 	game->time = 0;
 	game->old_time = 0;
 	print_map(game);
-	//mlx_key_hook(game->mlx, (mlx_keyfunc)hook, game);
+	mlx_key_hook(game->mlx, (mlx_keyfunc)hook, &game);
 	mlx_loop(game->mlx);
 	mlx_terminate(game->mlx);
 	data = free_data(data);

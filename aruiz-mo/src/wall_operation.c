@@ -12,7 +12,7 @@
 
 #include "../inc/cub3d.h"
 
-float calc_rad(float g)
+double calc_rad(double g)
 {
 	return (g * (PI / 180));
 }

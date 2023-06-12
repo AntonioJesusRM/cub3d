@@ -20,6 +20,7 @@
 # define WIDTH 800
 # define PI 3.1416
 # define HEIGHT 600
+# define SPEED 0.15
 
 typedef struct s_data
 {
@@ -42,9 +43,11 @@ typedef struct s_vector
 
 typedef struct s_player
 {
-	t_vector		position;
-	t_vector		direction;
-	t_vector		cam;
+	t_vector		pos;
+	t_vector		dir;
+	t_vector		plane;
+	double			turn; //velocidad del giro
+	mlx_image_t		*img;
 }	t_player;
 
 typedef struct s_game
