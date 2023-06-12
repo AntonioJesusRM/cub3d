@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/26 20:17:14 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/03/16 10:01:45 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/22 16:08:31 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*ft_strdup(const char *s)
 	if (new_str == NULL)
 		return (NULL);
 	i = 0;
-	while (*(s + i) != '\0')
+	while (*(s + i) != '\0' && *(s + i) != '\n')
 	{
 		*(new_str + i) = *(s + i);
 		i++;
