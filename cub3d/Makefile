@@ -6,14 +6,14 @@
 #    By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/19 10:13:51 by aruiz-mo          #+#    #+#              #
-#    Updated: 2023/05/29 10:05:09 by aruiz-mo         ###   ########.fr        #
+#    Updated: 2023/06/13 13:22:50 by aruiz-mo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	=	cub3d
 SRCS	=	src/main.c src/argv_validate.c src/color_validate.c \
 			src/texture_validate.c src/map_validate.c src/read_map.c \
-			src/char_array_utils.c src/wall_operation.c
+			src/char_array_utils.c src/cub3d_utils.c src/init_cub3d.c
 CC		=	gcc
 CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf
