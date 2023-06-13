@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/29 10:14:54 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/09 13:55:58 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,7 @@
 # define WIDTH 800
 # define PI 3.1416
 # define HEIGHT 600
-# define SPEED 3
-
-typedef struct s_vector
-{
-	double	x;
-	double	y;
-}	t_vector;
+# define SPEED 0.20
 
 typedef struct s_data
 {
@@ -41,23 +35,25 @@ typedef struct s_data
 	int		mf;
 }	t_data;
 
+typedef struct s_vector
+{
+	double	x;
+	double	y;
+}	t_vector;
+
 typedef struct s_player
 {
-	int				x;
-	int				y;
-	double			grade;
-	double			turn; //velocidad del giro
-	mlx_image_t		*img;
-	mlx_image_t		*line;
+	t_vector		pos;
 	t_vector		dir;
 	t_vector		plane;
-	t_vector		pos;
+	double			turn;
 }	t_player;
 
 typedef struct s_game
 {
+	int			time;
+	int			old_time;
 	mlx_t		*mlx;
-	mlx_image_t	*img;
 	t_data		*data;
 	t_player	*player;
 }	t_game;

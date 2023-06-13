@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/20 17:06:56 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/24 08:38:31 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/05/26 18:06:13 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,9 @@ char	**norm_map(char **map, int *mf, int *mc)
 		if (ft_strlen(map[i]) >= max_len)
 			max_len = ft_strlen(map[i]);
 	}
-	i = -1;
 	(*mc) = max_len;
 	(*mf) = ft_get_len(map);
+	i = -1;
 	while (map[++i])
 	{
 		while (ft_strlen(map[i]) < max_len)

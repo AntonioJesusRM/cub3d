@@ -6,25 +6,23 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/24 09:16:17 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/09 13:55:58 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
-# define SPACE '0'
-# define WALL '1'
-# define NORTH 'N'
-# define SOUTH 'S'
-# define EAST 'E'
-# define WEST 'W'
-# define FOV '60'
 # include <stdio.h>
 # include <stdlib.h>
+# include <math.h>
 # include "../libs/libft/libft.h"
 # include "../libs/MLX42/include/MLX42/MLX42.h"
+# define WIDTH 800
+# define PI 3.1416
+# define HEIGHT 600
+# define SPEED 0.20
 
-typedef struct s_game
+typedef struct s_data
 {
 	char	*no;
 	char	*so;
@@ -32,23 +30,42 @@ typedef struct s_game
 	char	*ea;
 	char	**f;
 	char	**c;
+	char	**map;
 	int		mc;
 	int		mf;
-	char	**map;
-	mlx_t			*mlx;
-	mlx_texture_t	*texture;
-	mlx_image_t		*space;
-	mlx_image_t		*wall;
-	mlx_image_t		*player;
+}	t_data;
+
+typedef struct s_vector
+{
+	double	x;
+	double	y;
+}	t_vector;
+
+typedef struct s_player
+{
+	t_vector		pos;
+	t_vector		dir;
+	t_vector		plane;
+	double			turn;
+}	t_player;
+
+typedef struct s_game
+{
+	int			time;
+	int			old_time;
+	mlx_t		*mlx;
+	mlx_image_t	*img;
+	t_data		*data;
+	t_player	*player;
 }	t_game;
 
 //functions argv_validate
 
-int		argv_validate(int argc, char **argv, t_game **game);
-int		read_file(char *file_name, t_game **game);
+int		argv_validate(int argc, char **argv, t_data **data);
+int		read_file(char *file_name, t_data **data);
 int		check_file(char *file_name);
-int		parse_file(int fd, t_game **game, char *line);
-char	*parse_file_aux(int fd, t_game **game, char *line, int ctrl);
+int		parse_file(int fd, t_data **data, char *line);
+char	*parse_file_aux(int fd, t_data **data, char *line, int ctrl);
 
 //functions color_validate
 
@@ -60,8 +77,8 @@ void	set_color(char ***tex, char *line, int i);
 
 //functions texture_validate
 
-int		texture_data(char *line, t_game **game, int *ctrl_data, int *ini_map);
-int		set_texture(t_game **game, int **ctrl_data, char *line, int i);
+int		texture_data(char *line, t_data **data, int *ctrl_data, int *ini_map);
+int		set_texture(t_data **data, int **ctrl_data, char *line, int i);
 int		put_texture(char **str, char *line);
 int		is_map(char *line, int *ctrl_data, int *ini_map);
 
@@ -87,15 +104,8 @@ char	**ft_free_table(char **array);
 char	**duplicate_array(char **map);
 char	**ft_add_item(char **array, char *item);
 
-//functions main
+//functions wall_operation
 
-void				hook(mlx_key_data_t keydata, t_game *game);
-void				init_images(t_game *game);
-
-//functions print
-
-void				print_player(t_game *game);
-void				print_map(t_game *game);
-uint32_t			get_rgba(int r, int g, int b, int a);
+double 	calc_rad(double g);
 
 #endif
