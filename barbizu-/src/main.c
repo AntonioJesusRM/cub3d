@@ -64,8 +64,8 @@ t_player	*init_player(t_data **data, t_player *player)
 					ctrl = 0;
 		}
 	}
-	player->pos.y = i;
-	player->pos.x = j;
+	player->pos.y = i + 0.5;
+	player->pos.x = j + 0.5;
 	player->turn = calc_rad(2);
 	if ((*data)->map[i][j] == 'N')
 	{
@@ -207,7 +207,7 @@ void print_map(t_game *game)
 				map_y += step_y;
 				side = 1;
 			}
-			if (game->data->map[map_y][map_x] != '0') 
+			if (game->data->map[map_y][map_x] != '0')
 				hit = 1;
 		}
 		if(side == 0)
@@ -232,9 +232,18 @@ void print_map(t_game *game)
 	}
 }
 
+int	is_wall(int x, int y, char **map)
+{
+	if (map[y][x] == '1')
+		return (1);
+	return (0);
+}
+
 void	hook(mlx_key_data_t keydata, t_game **game)
 {
 	double	oldx;
+	double	newx;
+	double	newy;
 
 	if (keydata.key == MLX_KEY_RIGHT && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
@@ -264,44 +273,48 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 	if (keydata.key == MLX_KEY_W && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		if ((*game)->player->pos.x + ((*game)->player->dir.x * SPEED) >= 0 && (*game)->player->pos.y + ((*game)->player->dir.y * SPEED) >= 0 
-		&& (*game)->player->pos.x + ((*game)->player->dir.x * SPEED) <= (*game)->data->mc && (*game)->player->pos.y + ((*game)->player->dir.y * SPEED) <= (*game)->data->mf)
+		newx = (*game)->player->pos.x + (*game)->player->dir.x * SPEED;
+		newy = (*game)->player->pos.y + (*game)->player->dir.y * SPEED;
+		if (!is_wall((int)newx, (int)newy, (*game)->data->map))
 		{
-			(*game)->player->pos.x += (*game)->player->dir.x * SPEED;
-			(*game)->player->pos.y += (*game)->player->dir.y * SPEED;
+			(*game)->player->pos.x = newx;
+			(*game)->player->pos.y = newy;
 			print_map(*game);
 		}
 	}
 	if (keydata.key == MLX_KEY_S && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		if ((*game)->player->pos.x - ((*game)->player->dir.x * SPEED) >= 0 && (*game)->player->pos.y - ((*game)->player->dir.y * SPEED) >= 0 
-		&& (*game)->player->pos.x - ((*game)->player->dir.x * SPEED) <= (*game)->data->mc && (*game)->player->pos.y - ((*game)->player->dir.y * SPEED) <= (*game)->data->mf)
+		newx = (*game)->player->pos.x - (*game)->player->dir.x * SPEED;
+		newy = (*game)->player->pos.y - (*game)->player->dir.y * SPEED;
+		if (!is_wall((int)newx, (int)newy, (*game)->data->map))
 		{
-			(*game)->player->pos.x -= (*game)->player->dir.x * SPEED;
-			(*game)->player->pos.y -= (*game)->player->dir.y * SPEED;
+			(*game)->player->pos.x = newx;
+			(*game)->player->pos.y = newy;
 			print_map(*game);
 		}
 	}
 	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		if ((*game)->player->pos.x + ((*game)->player->dir.y * SPEED) >= 0 && (*game)->player->pos.y - ((*game)->player->dir.x * SPEED) >= 0 &&
-		(*game)->player->pos.x + ((*game)->player->dir.y * SPEED) <= (*game)->data->mc && (*game)->player->pos.y - ((*game)->player->dir.x * SPEED) <= (*game)->data->mf)
+		newx = (*game)->player->pos.x + (*game)->player->dir.y * SPEED;
+		newy = (*game)->player->pos.y - (*game)->player->dir.x * SPEED;
+		if (!is_wall((int)newx, (int)newy, (*game)->data->map))
 		{
-			(*game)->player->pos.x += (*game)->player->dir.y * SPEED;
-			(*game)->player->pos.y -= (*game)->player->dir.x * SPEED;
+			(*game)->player->pos.x = newx;
+			(*game)->player->pos.y = newy;
 			print_map(*game);
 		}
 	}
 	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
-		if ((*game)->player->pos.x - ((*game)->player->dir.y * SPEED) >= 0 && (*game)->player->pos.y + ((*game)->player->dir.x * SPEED) >= 0 &&
-		(*game)->player->pos.x - ((*game)->player->dir.y * SPEED) <= (*game)->data->mc && (*game)->player->pos.y + ((*game)->player->dir.x * SPEED) <= (*game)->data->mf)
+		newx = (*game)->player->pos.x - (*game)->player->dir.y * SPEED;
+		newy = (*game)->player->pos.y + (*game)->player->dir.x * SPEED;
+		if (!is_wall((int)newx, (int)newy, (*game)->data->map))
 		{
-			(*game)->player->pos.x -= (*game)->player->dir.y * SPEED;
-			(*game)->player->pos.y += (*game)->player->dir.x * SPEED;
+			(*game)->player->pos.x = newx;
+			(*game)->player->pos.y = newy;
 			print_map(*game);
 		}
 	}
