@@ -1,4 +1,4 @@
-NO textura.txt
+NO ../bluestone.png
 
 SO textura.txt
 
@@ -11,6 +11,7 @@ F 255,100,0
 C 225,00,0
 
 11111
-1W001
+10001
+1S001
 10001
 11111

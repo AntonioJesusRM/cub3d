@@ -21,6 +21,8 @@
 # define PI 3.1416
 # define HEIGHT 600
 # define SPEED 0.20
+# define TEXWIDTH 64
+# define TEXHEIGHT 64
 
 typedef struct s_data
 {
@@ -56,6 +58,8 @@ typedef struct s_game
 	mlx_t		*mlx;
 	t_data		*data;
 	t_player	*player;
+	mlx_texture_t	*texture;
+	mlx_image_t		*wall;
 }	t_game;
 
 //functions argv_validate

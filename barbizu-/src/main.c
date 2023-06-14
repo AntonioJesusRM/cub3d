@@ -109,11 +109,13 @@ uint32_t get_rgba(char **rgb)
 	b = ft_atoi(rgb[2]);
     return (r << 24 | g << 16 | b << 8 | 255);
 }
-void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_image_t	*img)
+
+void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_image_t	*img, char *buffer)
 {
 	int	i;
 
 	i = 0;
+	(void)color;
 	while (i < y_init)
 	{
 		mlx_put_pixel(img, x, i, get_rgba(game->data->c));
@@ -121,7 +123,7 @@ void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_i
 	}
 	while (i < y_end)
 	{
-		mlx_put_pixel(img, x, i, color);
+		mlx_put_pixel(img, x, i, buffer[i]);
 		i++;
 	}
 	while (i < HEIGHT)
@@ -130,6 +132,25 @@ void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_i
 		i++;
 	}
 }
+
+void	clear_buffer(char **buffer)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < WIDTH)
+	{
+		j = 0;
+		while (j < HEIGHT)
+		{
+			buffer[i][j] = '0';
+			j++;
+		}
+		i++;
+	}
+}
+
 void print_map(t_game *game)
 {
 	int		x;
@@ -152,12 +173,31 @@ void print_map(t_game *game)
 	int		draw_end;
 	uint32_t	color;
 	mlx_image_t	*img;
+	double	wallX;
+	int		texX;
+	double	step;
+	double	texPos;
+	int		y;
+	int		texY;
+	uint32_t	color2;
+	char	**buffer;
 
 	img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	if (!img)
 		printf("ERROR\n");
 	if (mlx_image_to_window(game->mlx, img, 0, 0) < 0)
 		printf("ERROR\n");
+	game->texture = mlx_load_png(game->data->no);
+	if (!game->texture)
+		printf("Error\n");
+	game->wall = mlx_texture_to_image(game->mlx, game->texture);
+	buffer = (char **)malloc(sizeof(char *) * WIDTH);
+	x = 0;
+	while (x < WIDTH)
+	{
+		buffer[x] = (char *)malloc(sizeof(char) * HEIGHT);
+		x++;
+	}
 	x = 0;
 	while(x < WIDTH)
     {
@@ -214,11 +254,13 @@ void print_map(t_game *game)
 		{
 			perp_wall_dist = (side_dist_x - delta_x);
 			color = 0x0000FFFF;
+			wallX = game->player->pos.y + perp_wall_dist * ray_y;
 		}
 		else
 		{
 			perp_wall_dist = (side_dist_y - delta_y);
 			color = 0x000000FF;
+			wallX = game->player->pos.x + perp_wall_dist * ray_x;
 		}
 		line_h = (int)(HEIGHT / perp_wall_dist);
 		draw_start = -line_h / 2 + HEIGHT / 2;
@@ -227,7 +269,27 @@ void print_map(t_game *game)
 		draw_end = line_h / 2 + HEIGHT / 2;
 		if(draw_end >= HEIGHT)
 			draw_end = HEIGHT - 1;
-		draw_line(game, x, draw_start, draw_end, color, img);
+		wallX -= floor(wallX);
+		texX = (int)(wallX * (double)TEXWIDTH);
+		if (side == 0 && ray_x > 0)
+			texX = TEXWIDTH - texX - 1;
+		if (side == 1 && ray_y < 0)
+			texX = TEXWIDTH - texX - 1;
+		step = 1.0 * TEXHEIGHT / line_h;
+		texPos = (draw_start - HEIGHT / 2 + line_h / 2) * step;
+		y = draw_start;
+		while (y < draw_end)
+		{
+			texY = (int)texPos;
+			if(texY >= HEIGHT)
+				texY = HEIGHT - 1;
+			texPos += step;
+			color2 = game->wall->pixels[texX + 4 * TEXHEIGHT * texY];
+			buffer[x][y] = color2;
+			y++;
+		}
+		draw_line(game, x, draw_start, draw_end, color, img, buffer[x]);
+		clear_buffer(buffer);
 		x++;
 	}
 }
