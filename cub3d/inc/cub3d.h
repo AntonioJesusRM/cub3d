@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/13 13:43:39 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/14 12:14:49 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,21 @@ typedef struct s_ray
 	int			x;
 	int			y_init;
 	int			y_end;
+	int			map_x;
+	int			map_y;
+	double		camera_x;
+	double		ray_x;
+	double		ray_y;
+	double		delta_x;
+	double		delta_y;
+	double		side_dist_x;
+	double		side_dist_y;
+	int			step_x;
+	int			step_y;
+	int			hit;
+	int			side;
+	int			line_h;
+	double		perp_wall_dist;
 }	t_ray;
 
 //functions argv_validate
@@ -120,12 +135,29 @@ t_data		*free_data(t_data *data);
 void		draw_line(t_game *game, t_ray ray);
 
 //functions init_cub3d
+
 t_data		*init_data(t_data *data);
 t_game		*init_game(t_data **data, t_player **player, t_game *game);
 t_player	*init_player(t_data **data, t_player *player);
 t_player	*init_player_aux(t_data **data, t_player *player, int i, int j);
 
-//functions main
+//functions printer
+
 void		print_map(t_game *game);
+t_ray		calc_step_dist(t_game *game, t_ray ray);
+t_ray		dda(t_game *game, t_ray	ray);
+t_ray		calc_wall_height(t_ray ray);
+
+//functions  move
+void		move_player_vert(mlx_key_data_t keydata, t_game **game,
+				double newx, double newy);
+void		move_player_hor(mlx_key_data_t keydata, t_game **game,
+				double newx, double newy);
+void		move_cam_left(mlx_key_data_t keydata, t_game **game);
+void		move_cam_right(mlx_key_data_t keydata, t_game **game);
+
+//functions main
+void		hook(mlx_key_data_t keydata, t_game **game);
+int			main(int argc, char **argv);
 
 #endif
