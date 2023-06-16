@@ -51,6 +51,12 @@ typedef struct s_player
 	double			turn;
 }	t_player;
 
+typedef struct s_texture
+{
+	mlx_texture_t	*texture;
+	int			**buffer;
+}	t_texture;
+
 typedef struct s_game
 {
 	int			time;
@@ -58,8 +64,7 @@ typedef struct s_game
 	mlx_t		*mlx;
 	t_data		*data;
 	t_player	*player;
-	mlx_texture_t	*texture;
-	mlx_image_t		*wall;
+	t_texture	textures[4];
 }	t_game;
 
 //functions argv_validate

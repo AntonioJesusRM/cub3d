@@ -71,7 +71,7 @@ t_player	*init_player(t_data **data, t_player *player)
 	{
 		player->dir.x = 0;
 		player->dir.y = -1;
-		player->plane.x = 1;
+		player->plane.x = 0.64;
 		player->plane.y = 0;
 	}
 	else if ((*data)->map[i][j] == 'E')
@@ -79,13 +79,13 @@ t_player	*init_player(t_data **data, t_player *player)
 		player->dir.x = 1;
 		player->dir.y = 0;
 		player->plane.x = 0;
-		player->plane.y = -1;
+		player->plane.y = -0.64;
 	}
 	else if ((*data)->map[i][j] == 'S')
 	{
 		player->dir.x = 0;
 		player->dir.y = 1;
-		player->plane.x = -1;
+		player->plane.x = -0.64;
 		player->plane.y = 0;
 	}
 	else if ((*data)->map[i][j] == 'W')
@@ -93,7 +93,7 @@ t_player	*init_player(t_data **data, t_player *player)
 		player->dir.x = -1;
 		player->dir.y = 0;
 		player->plane.x = 0;
-		player->plane.y = 1;
+		player->plane.y = 0.64;
 	}
 	(*data)->map[i][j] = '0';
 	return (player);
@@ -110,12 +110,16 @@ uint32_t get_rgba(char **rgb)
     return (r << 24 | g << 16 | b << 8 | 255);
 }
 
-void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_image_t	*img, char *buffer)
+uint32_t	get_color(int r, int g, int b, int a)
+{
+	return (r << 24 | g << 16 | b << 8 | a);
+}
+
+void draw_line(t_game *game, int x, int y_init, int y_end, mlx_image_t	*img)
 {
 	int	i;
 
 	i = 0;
-	(void)color;
 	while (i < y_init)
 	{
 		mlx_put_pixel(img, x, i, get_rgba(game->data->c));
@@ -123,30 +127,11 @@ void draw_line(t_game *game, int x, int y_init, int y_end, uint32_t color, mlx_i
 	}
 	while (i < y_end)
 	{
-		mlx_put_pixel(img, x, i, buffer[i]);
 		i++;
 	}
 	while (i < HEIGHT)
 	{
 		mlx_put_pixel(img, x, i, get_rgba(game->data->f));
-		i++;
-	}
-}
-
-void	clear_buffer(char **buffer)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < WIDTH)
-	{
-		j = 0;
-		while (j < HEIGHT)
-		{
-			buffer[i][j] = '0';
-			j++;
-		}
 		i++;
 	}
 }
@@ -171,7 +156,7 @@ void print_map(t_game *game)
 	double	perp_wall_dist;
 	int		draw_start;
 	int		draw_end;
-	uint32_t	color;
+	int		color;
 	mlx_image_t	*img;
 	double	wallX;
 	int		texX;
@@ -179,25 +164,12 @@ void print_map(t_game *game)
 	double	texPos;
 	int		y;
 	int		texY;
-	uint32_t	color2;
-	char	**buffer;
 
 	img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	if (!img)
 		printf("ERROR\n");
 	if (mlx_image_to_window(game->mlx, img, 0, 0) < 0)
 		printf("ERROR\n");
-	game->texture = mlx_load_png(game->data->no);
-	if (!game->texture)
-		printf("Error\n");
-	game->wall = mlx_texture_to_image(game->mlx, game->texture);
-	buffer = (char **)malloc(sizeof(char *) * WIDTH);
-	x = 0;
-	while (x < WIDTH)
-	{
-		buffer[x] = (char *)malloc(sizeof(char) * HEIGHT);
-		x++;
-	}
 	x = 0;
 	while(x < WIDTH)
     {
@@ -253,13 +225,19 @@ void print_map(t_game *game)
 		if(side == 0)
 		{
 			perp_wall_dist = (side_dist_x - delta_x);
-			color = 0x0000FFFF;
+			if (ray_x > 0)
+				color = 3;
+			else
+				color = 2;
 			wallX = game->player->pos.y + perp_wall_dist * ray_y;
 		}
 		else
 		{
 			perp_wall_dist = (side_dist_y - delta_y);
-			color = 0x000000FF;
+			if (ray_y > 0)
+				color = 1;
+			else
+				color = 0;
 			wallX = game->player->pos.x + perp_wall_dist * ray_x;
 		}
 		line_h = (int)(HEIGHT / perp_wall_dist);
@@ -281,15 +259,13 @@ void print_map(t_game *game)
 		while (y < draw_end)
 		{
 			texY = (int)texPos;
-			if(texY >= HEIGHT)
-				texY = HEIGHT - 1;
+			if (texPos > TEXHEIGHT - 1)
+				texPos = TEXHEIGHT - 1;
 			texPos += step;
-			color2 = game->wall->pixels[texX + 4 * TEXHEIGHT * texY];
-			buffer[x][y] = color2;
+			mlx_put_pixel(img, x, y, game->textures[color].buffer[texY][texX]);
 			y++;
 		}
-		draw_line(game, x, draw_start, draw_end, color, img, buffer[x]);
-		clear_buffer(buffer);
+		draw_line(game, x, draw_start, draw_end, img);
 		x++;
 	}
 }
@@ -311,22 +287,34 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 			|| keydata.action == MLX_REPEAT))
 	{
 		oldx = (*game)->player->dir.x;
-		(*game)->player->dir.x = (*game)->player->dir.x * cos((*game)->player->turn) - (*game)->player->dir.y * sin((*game)->player->turn);
-		(*game)->player->dir.y = oldx * sin((*game)->player->turn) + (*game)->player->dir.y * cos((*game)->player->turn);
+		(*game)->player->dir.x = (*game)->player->dir.x
+			* cos((*game)->player->turn) + (*game)->player->dir.y
+			* sin((*game)->player->turn);
+		(*game)->player->dir.y = -oldx * sin((*game)->player->turn)
+			+ (*game)->player->dir.y * cos((*game)->player->turn);
 		oldx = (*game)->player->plane.x;
-		(*game)->player->plane.x = (*game)->player->plane.x * cos((*game)->player->turn) - (*game)->player->plane.y * sin((*game)->player->turn);
-		(*game)->player->plane.y = oldx * sin((*game)->player->turn) + (*game)->player->plane.y * cos((*game)->player->turn);
+		(*game)->player->plane.x = (*game)->player->plane.x
+			* cos((*game)->player->turn) + (*game)->player->plane.y
+			* sin((*game)->player->turn);
+		(*game)->player->plane.y = -oldx * sin((*game)->player->turn)
+			+ (*game)->player->plane.y * cos((*game)->player->turn);
 		print_map(*game);
 	}
 	if (keydata.key == MLX_KEY_LEFT && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
 		oldx = (*game)->player->dir.x;
-		(*game)->player->dir.x = (*game)->player->dir.x * cos(-(*game)->player->turn) - (*game)->player->dir.y * sin(-(*game)->player->turn);
-		(*game)->player->dir.y = oldx * sin(-(*game)->player->turn) + (*game)->player->dir.y * cos(-(*game)->player->turn);
+		(*game)->player->dir.x = (*game)->player->dir.x
+			* cos((*game)->player->turn) - (*game)->player->dir.y
+			* sin((*game)->player->turn);
+		(*game)->player->dir.y = oldx * sin((*game)->player->turn)
+			+ (*game)->player->dir.y * cos((*game)->player->turn);
 		oldx = (*game)->player->plane.x;
-		(*game)->player->plane.x = (*game)->player->plane.x * cos(-(*game)->player->turn) - (*game)->player->plane.y * sin(-(*game)->player->turn);
-		(*game)->player->plane.y = oldx * sin(-(*game)->player->turn) + (*game)->player->plane.y * cos(-(*game)->player->turn);
+		(*game)->player->plane.x = (*game)->player->plane.x
+			* cos((*game)->player->turn) - (*game)->player->plane.y
+			* sin((*game)->player->turn);
+		(*game)->player->plane.y = oldx * sin((*game)->player->turn)
+			+ (*game)->player->plane.y * cos((*game)->player->turn);
 		print_map(*game);
 	}
 	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS
@@ -356,7 +344,7 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 			print_map(*game);
 		}
 	}
-	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
+	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
 		newx = (*game)->player->pos.x + (*game)->player->dir.y * SPEED;
@@ -368,7 +356,7 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 			print_map(*game);
 		}
 	}
-	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
+	if (keydata.key == MLX_KEY_A && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 	{
 		newx = (*game)->player->pos.x - (*game)->player->dir.y * SPEED;
@@ -380,6 +368,52 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 			print_map(*game);
 		}
 	}
+}
+
+int	**texture_to_color(mlx_texture_t *texture)
+{
+	int	**buffer;
+	int	i;
+	int	j;
+	int	cnt;
+
+	i = 0;
+	cnt = 0;
+	buffer = malloc(sizeof(int *) * (texture->height + 1));
+	while ((uint32_t)i < texture->height)
+	{
+		j = 0;
+		buffer[i] = malloc(sizeof(int) * (texture->width + 1));
+		while ((uint32_t)j < texture->width)
+		{
+			buffer[i][j] = get_color(texture->pixels[cnt], texture->pixels[cnt + 1], texture->pixels[cnt + 2], texture->pixels[cnt + 3]);
+			j++;
+			cnt += 4;
+		}
+		i++;
+	}
+	return(buffer);
+}
+
+t_game *init_textures(t_game *game)
+{
+	game->textures[0].texture = mlx_load_png(game->data->no);
+	if (!game->textures[0].texture)
+		printf("Error\n");
+	game->textures[0].buffer = texture_to_color(game->textures[0].texture);
+	game->textures[1].texture = mlx_load_png(game->data->so);
+	if (!game->textures[1].texture)
+		printf("Error\n");
+	game->textures[1].buffer = texture_to_color(game->textures[1].texture);
+	game->textures[2].texture = mlx_load_png(game->data->we);
+	if (!game->textures[2].texture)
+		printf("Error\n");
+	game->textures[2].buffer = texture_to_color(game->textures[2].texture);
+	game->textures[3].texture = mlx_load_png(game->data->ea);
+	if (!game->textures[3].texture)
+		printf("Error\n");
+	game->textures[3].buffer = texture_to_color(game->textures[3].texture);
+	return (game);
 }
 
 int	main(int argc, char **argv)
@@ -412,6 +446,7 @@ int	main(int argc, char **argv)
 	game->data = data;
 	game->time = 0;
 	game->old_time = 0;
+	game = init_textures(game);
 	print_map(game);
 	mlx_key_hook(game->mlx, (mlx_keyfunc)hook, &game);
 	mlx_loop(game->mlx);
