@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/14 12:12:36 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/14 12:33:41 by barbizu-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 	double	newx;
 	double	newy;
 
+	newx = 0;
+	newy = 0;
 	if (keydata.key == MLX_KEY_ESCAPE && (keydata.action == MLX_PRESS
 			|| keydata.action == MLX_REPEAT))
 		mlx_close_window((*game)->mlx);
