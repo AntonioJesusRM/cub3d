@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:52:05 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/13 13:43:24 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/17 18:14:45 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,12 @@ uint32_t	get_rgba(char **rgb)
 	r = ft_atoi(rgb[0]);
 	g = ft_atoi(rgb[1]);
 	b = ft_atoi(rgb[2]);
-	return (r << 24 | g << 16 | b << 8 | 255);
+	return (get_color(r, g, b, 255));
 }
 
-double	calc_rad(double g)
+uint32_t	get_color(int r, int g, int b, int a)
 {
-	return (g * (PI / 180));
+	return (r << 24 | g << 16 | b << 8 | a);
 }
 
 int	is_wall(int x, int y, char **map)
@@ -51,24 +51,31 @@ t_data	*free_data(t_data *data)
 	return (data);
 }
 
-void	draw_line(t_game *game, t_ray ray)
+int	**texture_to_color(mlx_texture_t *texture)
 {
+	int	**buffer;
 	int	i;
+	int	j;
+	int	cnt;
 
 	i = 0;
-	while (i < ray.y_init)
+	cnt = 0;
+	buffer = malloc(sizeof(int *) * (texture->height + 1));
+	if (!buffer)
+		printf("Error\n");
+	while ((uint32_t)i < texture->height)
 	{
-		mlx_put_pixel(ray.img, ray.x, i, get_rgba(game->data->c));
+		j = 0;
+		buffer[i] = malloc(sizeof(int) * (texture->width + 1));
+		while ((uint32_t)j < texture->width)
+		{
+			buffer[i][j] = get_color(texture->pixels[cnt],
+					texture->pixels[cnt + 1],
+					texture->pixels[cnt + 2], texture->pixels[cnt + 3]);
+			j++;
+			cnt += 4;
+		}
 		i++;
 	}
-	while (i < ray.y_end)
-	{
-		mlx_put_pixel(ray.img, ray.x, i, ray.color);
-		i++;
-	}
-	while (i < HEIGHT)
-	{
-		mlx_put_pixel(ray.img, ray.x, i, get_rgba(game->data->f));
-		i++;
-	}
+	return (buffer);
 }

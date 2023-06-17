@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/14 12:14:49 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/17 18:17:47 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # define PI 3.1416
 # define HEIGHT 600
 # define SPEED 0.20
+# define TEXWIDTH 64
+# define TEXHEIGHT 64
 
 typedef struct s_data
 {
@@ -49,11 +51,18 @@ typedef struct s_player
 	double			turn;
 }	t_player;
 
+typedef struct s_texture
+{
+	mlx_texture_t	*texture;
+	int				**buffer;
+}	t_texture;
+
 typedef struct s_game
 {
 	mlx_t		*mlx;
 	t_data		*data;
 	t_player	*player;
+	t_texture	*textures;
 }	t_game;
 
 typedef struct s_ray
@@ -61,6 +70,7 @@ typedef struct s_ray
 	mlx_image_t	*img;
 	uint32_t	color;
 	int			x;
+	int			y;
 	int			y_init;
 	int			y_end;
 	int			map_x;
@@ -78,6 +88,11 @@ typedef struct s_ray
 	int			side;
 	int			line_h;
 	double		perp_wall_dist;
+	double		wall_x;
+	int			tex_x;
+	int			tex_y;
+	double		step;
+	double		tex_pos;
 }	t_ray;
 
 //functions argv_validate
@@ -129,14 +144,15 @@ char		**ft_add_item(char **array, char *item);
 //functions cub3d_utils
 
 uint32_t	get_rgba(char **rgb);
-double		calc_rad(double g);
+uint32_t	get_color(int r, int g, int b, int a);
 int			is_wall(int x, int y, char **map);
 t_data		*free_data(t_data *data);
-void		draw_line(t_game *game, t_ray ray);
+int			**texture_to_color(mlx_texture_t *texture);
 
 //functions init_cub3d
 
 t_data		*init_data(t_data *data);
+t_game		*init_textures(t_game *game);
 t_game		*init_game(t_data **data, t_player **player, t_game *game);
 t_player	*init_player(t_data **data, t_player *player);
 t_player	*init_player_aux(t_data **data, t_player *player, int i, int j);
@@ -144,9 +160,8 @@ t_player	*init_player_aux(t_data **data, t_player *player, int i, int j);
 //functions printer
 
 void		print_map(t_game *game);
-t_ray		calc_step_dist(t_game *game, t_ray ray);
-t_ray		dda(t_game *game, t_ray	ray);
-t_ray		calc_wall_height(t_ray ray);
+t_ray		print_col(t_ray ray, t_game *game);
+void		draw_line(t_game *game, t_ray ray);
 
 //functions  move
 void		move_player_vert(mlx_key_data_t keydata, t_game **game,
@@ -155,6 +170,13 @@ void		move_player_hor(mlx_key_data_t keydata, t_game **game,
 				double newx, double newy);
 void		move_cam_left(mlx_key_data_t keydata, t_game **game);
 void		move_cam_right(mlx_key_data_t keydata, t_game **game);
+
+//functions calc_print
+
+double		calc_rad(double g);
+t_ray		calc_step_dist(t_game *game, t_ray ray);
+t_ray		dda(t_game *game, t_ray	ray);
+void		calc_wall_height(t_ray *ray, t_game *game);
 
 //functions main
 void		hook(mlx_key_data_t keydata, t_game **game);

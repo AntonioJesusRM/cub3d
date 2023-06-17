@@ -14,7 +14,7 @@ NAME	=	cub3d
 SRCS	=	src/main.c src/argv_validate.c src/color_validate.c \
 			src/texture_validate.c src/map_validate.c src/read_map.c \
 			src/char_array_utils.c src/cub3d_utils.c src/init_cub3d.c \
-			src/printer.c src/move.c
+			src/printer.c src/move.c src/calc_print.c
 CC		=	gcc
 CFLAGS	=	-Wextra -Wall -Werror
 RM		=	rm -rf
