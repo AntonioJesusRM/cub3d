@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/17 18:17:47 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:08:16 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ char		**ft_add_item(char **array, char *item);
 uint32_t	get_rgba(char **rgb);
 uint32_t	get_color(int r, int g, int b, int a);
 int			is_wall(int x, int y, char **map);
-t_data		*free_data(t_data *data);
 int			**texture_to_color(mlx_texture_t *texture);
 
 //functions init_cub3d
@@ -177,6 +176,12 @@ double		calc_rad(double g);
 t_ray		calc_step_dist(t_game *game, t_ray ray);
 t_ray		dda(t_game *game, t_ray	ray);
 void		calc_wall_height(t_ray *ray, t_game *game);
+
+//functions free_all
+
+void		free_game(t_game *game);
+t_data		*free_data(t_data *data);
+t_texture	*free_texture(t_texture *texture);
 
 //functions main
 void		hook(mlx_key_data_t keydata, t_game **game);

@@ -6,11 +6,16 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/14 12:33:41 by barbizu-         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:35:00 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/cub3d.h"
+
+void leaks(void) {
+	
+	system("leaks -q cub3d");
+}
 
 void	hook(mlx_key_data_t keydata, t_game **game)
 {
@@ -34,6 +39,7 @@ int	main(int argc, char **argv)
 	t_game		*game;
 	t_player	*player;
 
+	atexit(leaks);
 	data = malloc(sizeof(t_data));
 	game = malloc(sizeof(t_game));
 	player = malloc(sizeof(t_player));
@@ -50,9 +56,7 @@ int	main(int argc, char **argv)
 	mlx_key_hook(game->mlx, (mlx_keyfunc)hook, &game);
 	mlx_loop(game->mlx);
 	mlx_terminate(game->mlx);
-	data = free_data(data);
-	free(data);
-	free(player);
+	free_game(game);
 	free(game);
 	return (EXIT_SUCCESS);
 }

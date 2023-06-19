@@ -1,17 +1,15 @@
-NO textura.txt
+NO ../greystone.png
 
-SO textura.txt
+SO ../bluestone.png
 
-WE textura.txt                         
+WE ../purplestone.png                    
 			
-EA textura.txt
+EA ../redbrick.png
 
 F 255,100,0
 
 C 225,00,0
 
-11111
-10001
-1E001
-10001
-11111
+111
+1W1
+111

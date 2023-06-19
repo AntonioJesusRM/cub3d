@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:52:05 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/17 18:14:45 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 10:02:24 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,21 +34,6 @@ int	is_wall(int x, int y, char **map)
 	if (map[y][x] == '1')
 		return (1);
 	return (0);
-}
-
-t_data	*free_data(t_data *data)
-{
-	free (data->no);
-	free (data->so);
-	free (data->we);
-	free (data->ea);
-	ft_free_table(data->c);
-	free(data->c);
-	ft_free_table(data->f);
-	free(data->f);
-	ft_free_table(data->map);
-	free(data->map);
-	return (data);
 }
 
 int	**texture_to_color(mlx_texture_t *texture)
