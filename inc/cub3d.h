@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 19:11:15 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/19 10:08:16 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:46:14 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,7 @@ void		calc_wall_height(t_ray *ray, t_game *game);
 void		free_game(t_game *game);
 t_data		*free_data(t_data *data);
 t_texture	*free_texture(t_texture *texture);
+int			**free_mat(int	**mat);
 
 //functions main
 void		hook(mlx_key_data_t keydata, t_game **game);

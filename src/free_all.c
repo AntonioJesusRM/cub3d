@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 10:01:51 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/19 10:38:04 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:43:58 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 void	free_game(t_game *game)
 {
 	game->data = free_data(game->data);
-	if (game->textures)
-		game->textures = free_texture(game->textures);
+	game->textures = free_texture(game->textures);
 	free(game->textures);
-	//free(game->data);
-	//free(game->player);
+	free(game->data);
+	free(game->player);
 }
 
 t_data	*free_data(t_data *data)
@@ -37,23 +36,35 @@ t_data	*free_data(t_data *data)
 	return (data);
 }
 
+int	**free_mat(int	**mat)
+{
+	int	i;
+
+	i = 0;
+	if (mat [i] && mat[i] != NULL)
+	{
+		while (mat[i] && mat[i] != NULL)
+		{
+			free(mat[i]);
+			mat[i] = NULL;
+			i++;
+		}
+	}
+	return (mat);
+}
+
 t_texture	*free_texture(t_texture *texture)
 {
 	int	i;
 
-	free(texture->texture);
 	i = 0;
-	if (texture->buffer[i] && texture->buffer[i] != NULL)
+	while (i < 4)
 	{
-		while (texture->buffer[i] && texture->buffer[i] != NULL)
-		{
-			free(texture->buffer[i]);
-			texture->buffer[i] = NULL;
-			i++;
-		}
+		mlx_delete_texture(texture[i].texture);
+		texture[i].buffer = free_mat(texture[i].buffer);
+		free(texture[i].buffer);
+		texture[i].buffer = NULL;
+		i++;
 	}
-	if (texture->buffer [i])
-		free(texture->buffer);
-	texture->buffer = NULL;
 	return (texture);
 }

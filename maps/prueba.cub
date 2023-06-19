@@ -1,0 +1,17 @@
+NO ./textures/stone_drygrass_alt_tileset_2.png
+
+SO ./textures/bluestone.png
+
+WE ./textures/purplestone.png                    
+			
+EA ./textures/redbrick.png
+
+F 255,100,0
+
+C 225,00,0
+
+11111
+10001
+10N01
+10001
+11111

@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/13 12:52:05 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/19 10:02:24 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 11:44:52 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,12 +43,12 @@ int	**texture_to_color(mlx_texture_t *texture)
 	int	j;
 	int	cnt;
 
-	i = 0;
+	i = -1;
 	cnt = 0;
 	buffer = malloc(sizeof(int *) * (texture->height + 1));
 	if (!buffer)
 		printf("Error\n");
-	while ((uint32_t)i < texture->height)
+	while ((uint32_t)++i < texture->height)
 	{
 		j = 0;
 		buffer[i] = malloc(sizeof(int) * (texture->width + 1));
@@ -60,7 +60,7 @@ int	**texture_to_color(mlx_texture_t *texture)
 			j++;
 			cnt += 4;
 		}
-		i++;
 	}
+	buffer[i] = NULL;
 	return (buffer);
 }
