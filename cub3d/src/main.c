@@ -28,9 +28,18 @@ void	hook(mlx_key_data_t keydata, t_game **game)
 			|| keydata.action == MLX_REPEAT))
 		mlx_close_window((*game)->mlx);
 	move_player_vert(keydata, game, newx, newy);
-	move_player_hor(keydata, game, newx, newy);
-	move_cam_left(keydata, game);
-	move_cam_right(keydata, game);
+	if ((*game)->player->start_dir == 'N' || (*game)->player->start_dir == 'S')
+	{
+		move_player_hor_ns(keydata, game, newx, newy);
+		move_cam_left_ns(keydata, game);
+		move_cam_right_ns(keydata, game);
+	}
+	else
+	{
+		move_player_hor_we(keydata, game, newx, newy);
+		move_cam_left_we(keydata, game);
+		move_cam_right_we(keydata, game);
+	}
 }
 
 int	main(int argc, char **argv)

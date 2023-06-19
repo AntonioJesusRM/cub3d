@@ -43,19 +43,19 @@ void	print_map(t_game *game)
 t_ray	print_col(t_ray ray, t_game *game)
 {
 	ray.wall_x -= floor(ray.wall_x);
-	ray.tex_x = (int)(ray.wall_x * (double)TEXWIDTH);
+	ray.tex_x = (int)(ray.wall_x * (double)game->textures->texture->width);
 	if (ray.side == 0 && ray.ray_x > 0)
-		ray.tex_x = TEXWIDTH - ray.tex_x - 1;
+		ray.tex_x = game->textures->texture->width - ray.tex_x - 1;
 	if (ray.side == 1 && ray.ray_y < 0)
-		ray.tex_x = TEXWIDTH - ray.tex_x - 1;
-	ray.step = 1.0 * TEXHEIGHT / ray.line_h;
+		ray.tex_x = game->textures->texture->width - ray.tex_x - 1;
+	ray.step = 1.0 * game->textures->texture->height / ray.line_h;
 	ray.tex_pos = (ray.y_init - HEIGHT / 2 + ray.line_h / 2) * ray.step;
 	ray.y = ray.y_init;
 	while (ray.y < ray.y_end)
 	{
 		ray.tex_y = (int)ray.tex_pos;
-		if (ray.tex_pos > TEXHEIGHT - 1)
-			ray.tex_pos = TEXHEIGHT - 1;
+		if (ray.tex_pos > game->textures->texture->height - 1)
+			ray.tex_pos = game->textures->texture->height - 1;
 		ray.tex_pos += ray.step;
 		mlx_put_pixel(ray.img, ray.x,
 			ray.y, game->textures[ray.color].buffer[ray.tex_y][ray.tex_x]);

@@ -21,8 +21,6 @@
 # define PI 3.1416
 # define HEIGHT 600
 # define SPEED 0.20
-# define TEXWIDTH 64
-# define TEXHEIGHT 64
 
 typedef struct s_data
 {
@@ -49,6 +47,7 @@ typedef struct s_player
 	t_vector		dir;
 	t_vector		plane;
 	double			turn;
+	char			start_dir;
 }	t_player;
 
 typedef struct s_texture
@@ -165,10 +164,16 @@ void		draw_line(t_game *game, t_ray ray);
 //functions  move
 void		move_player_vert(mlx_key_data_t keydata, t_game **game,
 				double newx, double newy);
-void		move_player_hor(mlx_key_data_t keydata, t_game **game,
+void		move_player_hor_we(mlx_key_data_t keydata, t_game **game,
 				double newx, double newy);
-void		move_cam_left(mlx_key_data_t keydata, t_game **game);
-void		move_cam_right(mlx_key_data_t keydata, t_game **game);
+void		move_cam_left_we(mlx_key_data_t keydata, t_game **game);
+void		move_cam_right_we(mlx_key_data_t keydata, t_game **game);
+
+//functions move_ns
+void		move_player_hor_ns(mlx_key_data_t keydata, t_game **game,
+				double newx, double newy);
+void		move_cam_left_ns(mlx_key_data_t keydata, t_game **game);
+void		move_cam_right_ns(mlx_key_data_t keydata, t_game **game);
 
 //functions calc_print
 

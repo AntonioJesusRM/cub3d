@@ -41,7 +41,7 @@ void	move_player_vert(mlx_key_data_t keydata, t_game **game,
 	}
 }
 
-void	move_player_hor(mlx_key_data_t keydata, t_game **game,
+void	move_player_hor_we(mlx_key_data_t keydata, t_game **game,
 	double newx, double newy)
 {
 	if (keydata.key == MLX_KEY_D && (keydata.action == MLX_PRESS
@@ -70,7 +70,7 @@ void	move_player_hor(mlx_key_data_t keydata, t_game **game,
 	}
 }
 
-void	move_cam_right(mlx_key_data_t keydata, t_game **game)
+void	move_cam_right_we(mlx_key_data_t keydata, t_game **game)
 {
 	double	oldx;
 
@@ -93,7 +93,7 @@ void	move_cam_right(mlx_key_data_t keydata, t_game **game)
 	}
 }
 
-void	move_cam_left(mlx_key_data_t keydata, t_game **game)
+void	move_cam_left_we(mlx_key_data_t keydata, t_game **game)
 {
 	double	oldx;
 
