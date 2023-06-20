@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/17 18:12:11 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/17 18:14:54 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/19 12:46:04 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ void	calc_wall_height(t_ray *ray, t_game *game)
 	{
 		ray->perp_wall_dist = (ray->side_dist_x - ray->delta_x);
 		if (ray->ray_x > 0)
-			ray->color = 3;
-		else
 			ray->color = 2;
+		else
+			ray->color = 3;
 		ray->wall_x = game->player->pos.y + ray->perp_wall_dist * ray->ray_y;
 	}
 	else
