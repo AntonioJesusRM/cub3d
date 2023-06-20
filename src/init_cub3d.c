@@ -96,7 +96,7 @@ t_player	*init_player_aux(t_data **data, t_player *player, int i, int j)
 	if ((*data)->map[i][j] == 'N')
 	{
 		player->dir = (t_vector){0, -1};
-		player->plane = (t_vector){0.64, 0};
+		player->plane = (t_vector){1, 0};
 		player->start_dir = 'N';
 	}
 	else if ((*data)->map[i][j] == 'E')
@@ -108,7 +108,7 @@ t_player	*init_player_aux(t_data **data, t_player *player, int i, int j)
 	else if ((*data)->map[i][j] == 'S')
 	{
 		player->dir = (t_vector){0, 1};
-		player->plane = (t_vector){-0.64, 0};
+		player->plane = (t_vector){-1, 0};
 		player->start_dir = 'S';
 	}
 	else if ((*data)->map[i][j] == 'W')

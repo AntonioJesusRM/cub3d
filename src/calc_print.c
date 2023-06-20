@@ -60,8 +60,10 @@ t_ray	dda(t_game *game, t_ray	ray)
 			ray.map_y += ray.step_y;
 			ray.side = 1;
 		}
-		if (game->data->map[ray.map_y][ray.map_x] != '0')
+		if (game->data->map[ray.map_x][ray.map_y] != '0')
+		{
 			ray.hit = 1;
+		}
 	}
 	calc_wall_height(&ray, game);
 	ray = print_col(ray, game);

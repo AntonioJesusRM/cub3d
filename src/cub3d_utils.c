@@ -31,7 +31,7 @@ uint32_t	get_color(int r, int g, int b, int a)
 
 int	is_wall(int x, int y, char **map)
 {
-	if (map[y][x] == '1')
+	if (map[x][y] == '1')
 		return (1);
 	return (0);
 }
