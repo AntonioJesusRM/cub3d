@@ -84,7 +84,7 @@ t_player	*init_player(t_data **data, t_player *player)
 					ctrl = 0;
 		}
 	}
-	player->pos = (t_vector){i + 0.5, j + 0.5};
+	player->pos = (t_vector){j + 0.5, i + 0.5};
 	player->turn = calc_rad(2);
 	player = init_player_aux(data, player, i, j);
 	(*data)->map[i][j] = '0';
@@ -96,7 +96,7 @@ t_player	*init_player_aux(t_data **data, t_player *player, int i, int j)
 	if ((*data)->map[i][j] == 'N')
 	{
 		player->dir = (t_vector){0, -1};
-		player->plane = (t_vector){1, 0};
+		player->plane = (t_vector){0.64, 0};
 		player->start_dir = 'N';
 	}
 	else if ((*data)->map[i][j] == 'E')
@@ -108,7 +108,7 @@ t_player	*init_player_aux(t_data **data, t_player *player, int i, int j)
 	else if ((*data)->map[i][j] == 'S')
 	{
 		player->dir = (t_vector){0, 1};
-		player->plane = (t_vector){-1, 0};
+		player->plane = (t_vector){-0.64, 0};
 		player->start_dir = 'S';
 	}
 	else if ((*data)->map[i][j] == 'W')
