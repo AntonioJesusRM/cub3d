@@ -6,7 +6,7 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:53:19 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/06/19 11:45:26 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/23 12:19:41 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ int	main(int argc, char **argv)
 	if (argv_validate(argc, argv, &data) == 0)
 	{
 		data = free_data(data);
+		free(game);
+		free(player);
 		free(data);
 		return (EXIT_SUCCESS);
 	}

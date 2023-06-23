@@ -6,11 +6,11 @@
 /*   By: aruiz-mo <aruiz-mo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 18:03:41 by aruiz-mo          #+#    #+#             */
-/*   Updated: 2023/05/18 19:02:00 by aruiz-mo         ###   ########.fr       */
+/*   Updated: 2023/06/23 12:15:57 by aruiz-mo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "libft.h"
+#include "libft.h"
 
 char	*ft_read(int fd, char *buf)
 {
