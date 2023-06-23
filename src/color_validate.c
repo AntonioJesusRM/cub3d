@@ -81,7 +81,7 @@ int	test_number(char *line, int i)
 	{
 		if (line[i] == ',')
 			cont++;
-		else if (line[i] < '0' && line[i] > '9')
+		else if (line[i] < 48 || line[i] > 57)
 			ctrl = 0;
 		i++;
 	}
